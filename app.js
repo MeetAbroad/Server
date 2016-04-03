@@ -6,11 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
-
 mongoose.connect('mongodb://localhost/meetabroad');
+
+require('./models/User');
+require('./models/Interest');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var interests = require('./routes/interests');
 
 var app = express();
 
@@ -28,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/interests', interests);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
