@@ -2,20 +2,35 @@
     var app = angular.module('MeetAbroad');
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
-
-        $http.get('http://localhost:3000/interests', {
-			headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).success(function(data){
-            $scope.interests = data;
-        });
 		
-		$http.get('http://localhost:3000/interests/'+auth.currentUser(), {
-			headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).success(function(data){
-            $scope.myinterests = data;
-        });
+		$scope.refreshInterests = function(){
+			
+			$scope.selected = {};
+			
+			$http.get('http://localhost:3000/interests', {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).success(function(data){
+				$scope.interests = data;
+			});
+			
+			$http.get('http://localhost:3000/interests/'+auth.currentUser(), {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).success(function(data){
+				$scope.myinterests = data;
+				
+				// Update our 'selected' array
+				var i;
+				for(i=0; i<$scope.myinterests.length; i++)
+				{
+					$scope.selected[$scope.myinterests[i].codename] = true;
+				}
+			});
+		};
+	
+        $scope.refreshInterests();
 		
-		$scope.myinterest = function(interest){
+		// Check if it's in our interest list
+		$scope.myInterest = function(interest){
 			// If in array, then return true
 			var i;
 			for(i=0; i<this.myinterests.length; i++)
@@ -27,6 +42,46 @@
 			}
 			
 			return false;
+		};
+		
+		$scope.interestId = function(codename){
+			
+			// If in array, then return true
+			var i;
+			for(i=0; i<this.interests.length; i++)
+			{
+				if (this.interests[i].codename == codename)
+				{
+					return this.interests[i]._id;
+				}
+			}
+			
+			return false;
+		};
+		
+		// Update our interests
+		$scope.updateInterests = function(){
+	
+			var myinterests = [];
+			
+			angular.forEach($scope.selected, function(value, key) {
+
+				if(value == true)
+					myinterests.push($scope.interestId(key)); // store the _id
+			});
+			
+			console.log(myinterests);
+			
+			$http.post('/interests/update', {interests: myinterests}, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).success(function(data){
+				// Success
+				$scope.success = {};
+				$scope.success.message = data.message;
+				
+				// Refresh interests
+				$scope.refreshInterests();
+			});
 		};
     }]);
 	

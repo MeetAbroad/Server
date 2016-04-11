@@ -17,7 +17,7 @@ router.get('/', auth, function(req, res, next) {
 
 router.post('/update', auth, function(req, res, next) {
 	
-	var author = req.payload.email;
+	var email = req.payload.email;
 	
     User.findOne({email: email}).exec(function (err, user){
         if (err) {
@@ -33,7 +33,8 @@ router.post('/update', auth, function(req, res, next) {
 
 		// We found our user, so let's associate interests with it
 		user.interests = [];
-		user = req.body.interests;
+		user.interests = req.body.interests;
+		
 		user.save(function(err, post) {
 			if(err)
 			{
@@ -42,7 +43,7 @@ router.post('/update', auth, function(req, res, next) {
 				return next('Could not save your interests.');
 			}
 
-			res.json('Interests updated successfully.');
+			res.json({message: 'Interests updated successfully.'});
 		});
     });
 });
@@ -55,11 +56,9 @@ router.get('/:email', function(req, res, next) {
 	
     User.findOne({email: email}).exec(function (err, user){
         if (err) {
-			console.log('error1');
 			return next(err);
 		}
         if (!user) {
-			console.log('error2');
 			return next('User not found');
 		}
 

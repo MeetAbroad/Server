@@ -10,12 +10,21 @@
         <div class="container">
             <div class="row">
                     <h2>Manage your Interests</h2>
-                    <form>
+					
+					<div ng-show="error" class="alert alert-danger row">
+						<span>{{ error.message }}</span>
+					</div>
+					
+					<div ng-show="success" class="alert alert-success row">
+						<span>{{ success.message }}</span>
+					</div>
+					
+                    <form ng-submit="updateInterests()">
 						Filter by name: <input type="text" class="form-control" placeholder="Search here..." ng-model="searchText" style="width: 30%" />
 						<br />
                         <ul>
                             <li ng-repeat="interest in interests | orderBy:'title' | filter:searchText">
-                                <input type="checkbox" name="interests[]" value="{{ interest.codename }}" ng-checked="myinterest(interest);" />&nbsp;&nbsp;{{ interest.title }} - {{ interest.description }}
+                                <input type="checkbox" name="interests[]" value="{{ interest.codename }}" ng-checked="myInterest(interest);" ng-model="selected[interest.codename]"/>&nbsp;&nbsp;{{ interest.title }} - {{ interest.description }}
                             </li>
                         </ul>
                         <button type="submit" class="btn btn-default">Save</button>
