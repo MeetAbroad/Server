@@ -10,14 +10,4 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/new', function(req, res, next) {
-  var user = new User(req.body);
-
-  user.save(function(err, user){
-    if(err){ return next(err); }
-
-    res.json(user);
-  });
-});
-
 module.exports = router;

@@ -15,6 +15,8 @@ var UserSchema = new mongoose.Schema({
 
     destinationcountry: { type: String, required: true },
     destinationcity: { type: String, required: true },
+	
+	interests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interest' }]
 });
 
 UserSchema.methods.setPassword = function(password){

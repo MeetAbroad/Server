@@ -9,17 +9,17 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-xs-6 col-md-4">
-                    <h2>Check your Interests</h2>
+                    <h2>Manage your Interests</h2>
                     <form>
+						Filter by name: <input type="text" class="form-control" placeholder="Search here..." ng-model="searchText" style="width: 30%" />
+						<br />
                         <ul>
-                            <li ng-repeat="interest in interests | orderBy:'title'">
+                            <li ng-repeat="interest in interests | orderBy:'title' | filter:searchText">
                                 <input type="checkbox" name="interests[]" value="{{ interest.codename }}" ng-checked="myinterest(interest);" />&nbsp;&nbsp;{{ interest.title }} - {{ interest.description }}
                             </li>
                         </ul>
                         <button type="submit" class="btn btn-default">Save</button>
                     </form>
-                </div>
             </div>
         </div>
         <!-- /.container -->
