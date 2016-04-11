@@ -1,4 +1,6 @@
 # Readme
 This is the back-end of MeetAbroad.
 
-Mongoose is required. Bcrypt is required (which may require Python 2.7 for its installation).
+You need to run 'npm install'.
+
+For client-side javascript libraries, you need to run: 'bower install' from the 'public' directory.

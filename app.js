@@ -6,10 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/meetabroad');
 
 require('./models/User');
 require('./models/Interest');
+
+mongoose.connect('mongodb://localhost/meetabroad');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -28,52 +29,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Add headers
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:63342'); // This should be modified depending on the server IP / DNS
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
-
-// Uncomment below for Production mode
-/*app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/client/index.html');
-});
-
-app.get('/index-guest.html', function(req,res){
- res.sendFile(__dirname + '/client/index-guest.html');
-}); 
-
-app.get('/login.html', function(req,res){
- res.sendFile(__dirname + '/client/login.html');
-}); 
-
-app.get('/register.html', function(req,res){
- res.sendFile(__dirname + '/client/register.html');
-}); 
-
-app.get('/interests.html', function(req,res){
- res.sendFile(__dirname + '/client/interests.html');
-}); 
-
-app.use('/js', express.static(__dirname + '/client/js'));
-app.use('/css', express.static(__dirname + '/client/css'));
-app.use('/img', express.static(__dirname + '/client/img'));
-app.use('/font-awesome', express.static(__dirname + '/client/font-awesome'));*/
 
 app.use('/', routes); // Comment this for Production mode
 app.use('/users', users);
