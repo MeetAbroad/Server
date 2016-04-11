@@ -9,22 +9,22 @@
             $stateProvider
                 .state('index', {
                     url: '/index',
-                    templateUrl: './index/index-guest.html',
+                    templateUrl: 'index/index-guest.html',
                     controller: 'GuestController'
                 })
                 .state('login', {
                     url: '/login',
-                    templateUrl: './login.html',
+                    templateUrl: 'auth/login.html',
                     controller: 'GuestController',
                 })
                 .state('register', {
                     url: '/register',
-                    templateUrl: './register.html',
+                    templateUrl: 'auth/register.html',
                     controller: 'GuestController',
                 })
                 .state('interests', {
                     url: '/interests',
-                    templateUrl: './interests.html',
+                    templateUrl: 'interests/interests.html',
                     controller: 'UserController',
                 });
 
