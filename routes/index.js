@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index/index', { title: 'MeetAbroad API.' });
+  res.render('index', { title: 'MeetAbroad API.' });
 });
 
 module.exports = router;

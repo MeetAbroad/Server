@@ -8,7 +8,7 @@
 ## Directory-based project format:
 .idea/
 node_modules/
-public/js/
+public/js/libs/
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
