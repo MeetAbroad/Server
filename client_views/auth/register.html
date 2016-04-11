@@ -39,26 +39,31 @@
             <div class="row">
                 <div class="col-xs-12 col-md-8">
                     <h2>Register</h2>
-                    <form>
+					
+					<div ng-show="error" class="alert alert-danger row">
+						<span>{{ error.message }}</span>
+					</div>
+					
+                    <form ng-submit="register()">
                         <div class="form-group">
                             <label for="firstname">First Name</label>
-                            <input type="text" class="form-control" id="firstname" placeholder="First Name">
+                            <input type="text" class="form-control" id="firstname" placeholder="First Name"  ng-model="user.firstname" />
                         </div>
                         <div class="form-group">
                             <label for="lastname">Last Name</label>
-                            <input type="text" class="form-control" id="lastname" placeholder="Last Name">
+                            <input type="text" class="form-control" id="lastname" placeholder="Last Name"  ng-model="user.lastname" />
                         </div>
                         <div class="form-group">
                             <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" placeholder="Email">
+                            <input type="email" class="form-control" id="email" placeholder="Email"  ng-model="user.email" />
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password">
+                            <input type="password" class="form-control" id="password" placeholder="Password"  ng-model="user.password" />
                         </div>
                         <div class="form-group">
                             <label for="origincountry">Origin Country</label>
-                            <select name="origincountry" class="form-control" id="origincountry">
+                            <select name="origincountry" class="form-control" id="origincountry"  ng-model="user.origincountry">
                                 <option value="AF">Afghanistan</option>
                                 <option value="AX">Åland Islands</option>
                                 <option value="AL">Albania</option>
@@ -312,11 +317,11 @@
                         </div>
                         <div class="form-group">
                             <label for="origincity">Origin City</label>
-                            <input type="text" class="form-control" id="origincity" placeholder="Origin City">
+                            <input type="text" class="form-control" id="origincity" placeholder="Origin City"  ng-model="user.origincity" />
                         </div>
                         <div class="form-group">
                             <label for="destinationcountry">Destination Country</label>
-                            <select name="destinationcountry" class="form-control" id="destinationcountry">
+                            <select name="destinationcountry" class="form-control" id="destinationcountry"  ng-model="user.destinationcountry">
                                 <option value="AF">Afghanistan</option>
                                 <option value="AX">Åland Islands</option>
                                 <option value="AL">Albania</option>
@@ -570,11 +575,11 @@
                         </div>
                         <div class="form-group">
                             <label for="destinationcity">Destination City</label>
-                            <input type="text" class="form-control" id="destinationcity" placeholder="Destination City">
+                            <input type="text" class="form-control" id="destinationcity" placeholder="Destination City"  ng-model="user.destinationcity" />
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox"> Agree to our Terms of Service.
+                                <input type="checkbox" name="agree" ng-model="user.agree" /> Agree to our Terms of Service.
                             </label>
                         </div>
                         <button type="submit" class="btn btn-default">Submit</button>

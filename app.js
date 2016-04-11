@@ -6,9 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
+var passport = require('passport');
+
+process.env['MYSECRET'] = '123456123456123456';
 
 require('./models/User');
 require('./models/Interest');
+
+require('./config/passport');
 
 mongoose.connect('mongodb://localhost/meetabroad');
 
@@ -30,6 +35,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client_views')));
+
+app.use(passport.initialize());
 
 app.use('/', routes); // Comment this for Production mode
 app.use('/users', users);
