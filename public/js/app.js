@@ -11,7 +11,12 @@
                 .state('index', {
                     url: '/index',
                     templateUrl: 'index/index-guest.html',
-                    controller: 'GuestController'
+                    controller: 'GuestController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(auth.isLoggedIn()){
+							$state.go('home');
+						}
+					}]
                 })
 				/* Auth */
                 .state('login', {
@@ -78,8 +83,6 @@
 				var token = auth.getToken();
 				var payload = JSON.parse($window.atob(token.split('.')[1]));
 
-				console.log(payload);
-				
 				return payload.email;
 			}
 		};
@@ -98,6 +101,8 @@
 
 		auth.logOut = function(){
 			$window.localStorage.removeItem('meetabroad-token');
+			
+			$location.path("index");
 		};
 
 		return auth;
@@ -107,8 +112,11 @@
 
     }]);
 
-    app.controller('UserController', ['$scope', '$http', function($scope, $http) {
-        $http.get('http://localhost:3000/interests').success(function(data){ // This needs to be modified depending on the server
+    app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+
+        $http.get('http://localhost:3000/interests', {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).success(function(data){ // This needs to be modified depending on the server
             $scope.interests = data;
         })
     }]);
