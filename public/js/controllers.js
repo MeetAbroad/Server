@@ -5,9 +5,29 @@
 
         $http.get('http://localhost:3000/interests', {
 			headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).success(function(data){ // This needs to be modified depending on the server
+		}).success(function(data){
             $scope.interests = data;
-        })
+        });
+		
+		$http.get('http://localhost:3000/interests/'+auth.currentUser(), {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).success(function(data){
+            $scope.myinterests = data;
+        });
+		
+		$scope.myinterest = function(interest){
+			// If in array, then return true
+			var i;
+			for(i=0; i<this.myinterests.length; i++)
+			{
+				if (this.myinterests[i].codename == interest.codename)
+				{
+					return true;
+				}
+			}
+			
+			return false;
+		};
     }]);
 	
 	

@@ -19,16 +19,16 @@ router.post('/update', auth, function(req, res, next) {
 	
 	var author = req.payload.email;
 	
-	var query = User.findOne({email: email});
-
     User.findOne({email: email}).exec(function (err, user){
         if (err) {
-			res.status(401);
-			res.json('User not found.');
+			/*res.status(401);
+			res.json('User not found.');*/
+			return next('User not found.');
 		}
         if (!user) {
-			res.status(401);
-			res.json('User not found.');
+			/*res.status(401);
+			res.json('User not found.');*/
+			return next('User not found.');
 		}
 
 		// We found our user, so let's associate interests with it
@@ -37,11 +37,40 @@ router.post('/update', auth, function(req, res, next) {
 		user.save(function(err, post) {
 			if(err)
 			{
-				res.status(400);
-				res.json('Could not save your interests.');
+				/*res.status(400);
+				res.json('Could not save your interests.');*/
+				return next('Could not save your interests.');
 			}
 
 			res.json('Interests updated successfully.');
+		});
+    });
+});
+
+// Get user interests
+var User = mongoose.model('User');
+router.get('/:email', function(req, res, next) {
+	
+	var email = req.params.email;
+	
+    User.findOne({email: email}).exec(function (err, user){
+        if (err) {
+			console.log('error1');
+			return next(err);
+		}
+        if (!user) {
+			console.log('error2');
+			return next('User not found');
+		}
+
+        req.user = user;
+		
+		req.user.populate('interests', function(err, user) {
+			if (err) {
+				return next(err);
+			}
+		
+			res.json(user.interests);
 		});
     });
 });
