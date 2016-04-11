@@ -9,7 +9,7 @@
             $stateProvider
                 .state('index', {
                     url: '/index',
-                    templateUrl: './index-guest.html',
+                    templateUrl: './index/index-guest.html',
                     controller: 'GuestController'
                 })
                 .state('login', {
