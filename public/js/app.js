@@ -11,7 +11,6 @@
                 .state('index', {
                     url: '/index',
                     templateUrl: 'index/index-guest.html',
-                    controller: 'GuestController',
 					onEnter: ['$state', 'auth', function($state, auth){
 						if(auth.isLoggedIn()){
 							$state.go('home');
@@ -43,19 +42,29 @@
 				.state('home', {
                     url: '/index',
                     templateUrl: 'index/index-user.html',
-                    controller: 'UserController'
+                    controller: 'UserController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}]
                 })
                 .state('interests', {
                     url: '/interests',
                     templateUrl: 'interests/interests.html',
                     controller: 'UserController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}]
                 });
 
             $urlRouterProvider.otherwise('index');
         }
     ]);
 	
-	app.factory('auth', ['$http', '$window', function($http, $window){
+	app.factory('auth', ['$http', '$window', '$location', function($http, $window, $location){
 		var auth = {};
 
 		auth.saveToken = function (token){
@@ -102,15 +111,11 @@
 		auth.logOut = function(){
 			$window.localStorage.removeItem('meetabroad-token');
 			
-			$location.path("index");
+			$location.path('/');
 		};
 
 		return auth;
 	}]);
-
-    app.controller('HomeController', ['$scope', '$http', function($scope, $http) {
-
-    }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
 
