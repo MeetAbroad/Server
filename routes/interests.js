@@ -23,12 +23,12 @@ router.post('/update', auth, function(req, res, next) {
         if (err) {
 			/*res.status(401);
 			res.json('User not found.');*/
-			return next('User not found.');
+			return next(new Error('User not found.'));
 		}
         if (!user) {
 			/*res.status(401);
 			res.json('User not found.');*/
-			return next('User not found.');
+			return next(new Error('User not found.'));
 		}
 
 		// We found our user, so let's associate interests with it
@@ -40,7 +40,7 @@ router.post('/update', auth, function(req, res, next) {
 			{
 				/*res.status(400);
 				res.json('Could not save your interests.');*/
-				return next('Could not save your interests.');
+				return next(new Error('Could not save your interests.'));
 			}
 
 			res.json({message: 'Interests updated successfully.'});
@@ -59,7 +59,7 @@ router.get('/:email', function(req, res, next) {
 			return next(err);
 		}
         if (!user) {
-			return next('User not found');
+			return next(new Error('User not found'));
 		}
 
         req.user = user;

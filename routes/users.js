@@ -24,7 +24,7 @@ router.get('/:email', function(req, res, next) {
 			return next(err);
 		}
         if (!user) {
-			return next('User not found');
+			return next(new Error('User not found'));
 		}
 		
 		// Of course, we don't want to send out sensitive information though, only some fields
@@ -43,6 +43,25 @@ router.get('/:email', function(req, res, next) {
     });
 });
 
+// Get user data
+router.get('/origincity/:city', function(req, res, next) {
+	
+	var city = req.params.city;
+	
+    User.find({origincity: city}).exec(function (err, docs){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
+			return next(new Error('No results found.'));
+		}
+		
+		console.log(docs);
+		
+		res.json(docs);
+    });
+});
 
 router.post('/update', auth, function(req, res, next) {
 	
@@ -52,12 +71,12 @@ router.post('/update', auth, function(req, res, next) {
         if (err) {
 			/*res.status(401);
 			res.json('User not found.');*/
-			return next('User not found.');
+			return next(new Error('User not found.'));
 		}
         if (!user) {
 			/*res.status(401);
 			res.json('User not found.');*/
-			return next('User not found.');
+			return next(new Error('User not found.'));
 		}
 
 		user.firstname = req.body.firstname;
@@ -73,7 +92,7 @@ router.post('/update', auth, function(req, res, next) {
 			{
 				/*res.status(400);
 				res.json('Could not save your interests.');*/
-				return next('Could not save your options.');
+				return next(new Error('Could not save your options.'));
 			}
 
 			res.json({message: 'Options updated successfully.'});
