@@ -1,5 +1,32 @@
 (function() {
     var app = angular.module('MeetAbroad');
+	
+	app.controller('MainController', ['$scope', 'auth', function($scope, auth) {
+		
+		// Our styleSheets
+		if(auth.isLoggedIn())
+			$scope.stylesheets = ['css/home.css'];
+	}]);
+	
+	app.controller('HomeController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+
+		$scope.resultsByDestinationCity = {};
+		
+		$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).success(function(data){
+			$scope.user = data;
+			
+			$http.get('http://localhost:3000/users/destinationcity/'+$scope.user.destinationcity, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).success(function(data){
+				// We have our results now
+				$scope.resultsByDestinationCity = data;
+				
+				console.log(data);
+			});
+		});
+    }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
 		

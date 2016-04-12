@@ -6,13 +6,13 @@ var jwt = require('express-jwt');
 var User = mongoose.model('User');
 var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 
-router.get('/', function(req, res, next) {
+/*router.get('/', function(req, res, next) {
   User.find(function(err, users){
     if(err){ return next(err); }
 
     res.json(users);
   });
-});
+});*/
 
 // Get user data
 router.get('/:email', function(req, res, next) {
@@ -48,7 +48,7 @@ router.get('/origincity/:city', function(req, res, next) {
 	
 	var city = req.params.city;
 	
-    User.find({origincity: city}).exec(function (err, docs){
+    User.find({origincity: city}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -66,7 +66,7 @@ router.get('/origincountry/:country', function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({origincountry: country}).exec(function (err, docs){
+    User.find({origincountry: country}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -84,7 +84,7 @@ router.get('/destinationcity/:city', function(req, res, next) {
 	
 	var city = req.params.city;
 	
-    User.find({destinationcity: city}).exec(function (err, docs){
+    User.find({destinationcity: city}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -102,7 +102,7 @@ router.get('/destinationcountry/:country', function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({destinationcountry: country}).exec(function (err, docs){
+    User.find({destinationcountry: country}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}

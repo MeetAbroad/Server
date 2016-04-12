@@ -1,0 +1,9 @@
+<div class="row" ng-repeat="result in resultsByDestinationCity">
+	<span style="float: right">{{ result.age }}</span>
+	<span style="float: left"><a href="#/profile/{{ result._id }}">{{ result.firstname }} {{ result.lastname }}</a></span><br />
+	
+	<span style="float: right">{{ result.destinationcity }} - {{ result.destinationcountry }} <i class="fa fa-plane" aria-hidden="true"></i></span>
+	<i class="fa fa-home" aria-hidden="true"></i> <span>{{ result.origincountry }} - {{ result.origincity }}</span><br />
+	
+	<div style="text-align: center; padding: 5px"><button type="button" class="btn btn-info btn-xs"><i class="fa fa-plus-circle" aria-hidden="true"></i> Send Request</button></div>
+</div>

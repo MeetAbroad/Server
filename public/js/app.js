@@ -42,7 +42,7 @@
 				.state('home', {
                     url: '/index',
                     templateUrl: 'index/index-user.html',
-                    controller: 'UserController',
+                    controller: 'HomeController',
 					onEnter: ['$state', 'auth', function($state, auth){
 						if(!auth.isLoggedIn()){
 							$state.go('index');

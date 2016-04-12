@@ -1,0 +1,16 @@
+.suggestions .row {
+	padding: 10px;
+		border: 1px solid #ccc;
+}
+
+.toptitle {
+	border-bottom: 1px solid #ccc;
+}
+
+.suggestions h3 {
+	text-align: center;
+}
+
+.suggestions .title {
+	border: 0;
+}

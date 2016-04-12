@@ -21,4 +21,11 @@
             templateUrl: "common/scroll.html"
         };
     });
+	
+	app.directive("suggestions", function() {
+        return {
+            restrict: 'E',
+            templateUrl: "suggestions/block.html"
+        };
+    });
 })();

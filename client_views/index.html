@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="MeetAbroad" ng-controller="MainController">
 
 <head>
 
@@ -29,9 +29,11 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 	
+	<link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
+	
 </head>
 
-<body ng-app="MeetAbroad">
+<body>
 
     <ui-view></ui-view>
 
