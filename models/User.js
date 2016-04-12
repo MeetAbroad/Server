@@ -12,6 +12,8 @@ var UserSchema = new mongoose.Schema({
 
     origincountry: { type: String, required: true },
     origincity: { type: String, required: true },
+	
+    age: { type: Number, required: true },
 
     destinationcountry: { type: String, required: true },
     destinationcity: { type: String, required: true },

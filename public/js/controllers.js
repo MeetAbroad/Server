@@ -3,6 +3,12 @@
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
 		
+		$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).success(function(data){
+			$scope.user = data;
+		});
+		
 		$scope.refreshInterests = function(){
 			
 			$scope.selected = {};
@@ -70,8 +76,6 @@
 					myinterests.push($scope.interestId(key)); // store the _id
 			});
 			
-			console.log(myinterests);
-			
 			$http.post('/interests/update', {interests: myinterests}, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).success(function(data){
@@ -81,6 +85,53 @@
 				
 				// Refresh interests
 				$scope.refreshInterests();
+				
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
+			}).error(function(){
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
+			});
+		};
+		
+		// Update our options
+		$scope.updateOptions = function(){
+			
+			$http.post('/users/update', $scope.user, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).success(function(data){
+				// Success
+				$scope.success = {};
+				$scope.success.message = data.message;
+				
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
+				
+				// Refresh options
+				/*$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+						headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).success(function(data){
+					$scope.user = data;
+				});*/
+			}).error(function(){
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
 			});
 		};
     }]);

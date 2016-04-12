@@ -58,6 +58,16 @@
 							$state.go('index');
 						}
 					}]
+                })
+				.state('options', {
+                    url: '/options',
+                    templateUrl: 'user/options.html',
+                    controller: 'UserController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}]
                 });
 
             $urlRouterProvider.otherwise('index');

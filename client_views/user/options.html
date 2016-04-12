@@ -1,7 +1,5 @@
-
-
-    <!-- Navigation -->
-    <guest-navigation></guest-navigation>
+	<!-- Navigation -->
+	<user-navigation></user-navigation>
 
 
     <!-- Page Content -->
@@ -11,14 +9,17 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-md-8">
-                    <h2>Register</h2>
+                    <h2>User Options</h2>
 					
 					<div ng-show="error" class="alert alert-danger row">
 						<span>{{ error.message }}</span>
 					</div>
 					
-                    <form ng-submit="register()">
+					<div ng-show="success" class="alert alert-success row">
+						<span>{{ success.message }}</span>
+					</div>
+					
+                    <form ng-submit="updateOptions()">
                         <div class="form-group">
                             <label for="firstname">First Name</label>
                             <input type="text" class="form-control" id="firstname" placeholder="First Name"  ng-model="user.firstname" />
@@ -27,15 +28,7 @@
                             <label for="lastname">Last Name</label>
                             <input type="text" class="form-control" id="lastname" placeholder="Last Name"  ng-model="user.lastname" />
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" placeholder="Email"  ng-model="user.email" />
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password"  ng-model="user.password" />
-                        </div>
-                        <div class="form-group">
+						<div class="form-group">
                             <label for="origincountry">Origin Country</label>
                             <select name="origincountry" class="form-control" id="origincountry"  ng-model="user.origincountry">
                                 <option value="AF">Afghanistan</option>
@@ -549,27 +542,10 @@
                         </div>
                         <div class="form-group">
                             <label for="destinationcity">Destination City</label>
-                            <input type="text" class="form-control" id="destinationcity" placeholder="Destination City"  ng-model="user.destinationcity" />
+                            <input type="text" class="form-control" id="destinationcity" placeholder="Destination City" ng-model="user.destinationcity" />
                         </div>
-						<div class="form-group">
-                            <label for="destinationcity">How old are you?</label>
-                            <input type="text" class="form-control" id="age" placeholder="Enter your age"  ng-model="user.age" />
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="agree" ng-model="user.agree" /> Agree to our Terms of Service.
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
+                        <button type="submit" class="btn btn-default">Save</button>
                     </form>
-            </div>
-                <div class="col-xs-6 col-md-4">
-                    <h2>Already registered?</h2>
-
-                    <form>
-                        You can <a href="#/login">login</a> instead.
-                    </form>
-                </div>
             </div>
         </div>
         <!-- /.container -->
@@ -577,7 +553,7 @@
     </div>
     <!-- /.content-section-a -->
 
-    
+
     <div class="content-section-a">
     </div>
     <!-- /.content-section-a -->
