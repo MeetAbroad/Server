@@ -43,7 +43,7 @@ router.get('/:email', function(req, res, next) {
     });
 });
 
-// Get user data
+// Get users by origincity
 router.get('/origincity/:city', function(req, res, next) {
 	
 	var city = req.params.city;
@@ -57,7 +57,59 @@ router.get('/origincity/:city', function(req, res, next) {
 			return next(new Error('No results found.'));
 		}
 		
-		console.log(docs);
+		res.json(docs);
+    });
+});
+
+// Get users by origincountry
+router.get('/origincountry/:country', function(req, res, next) {
+	
+	var country = req.params.country;
+	
+    User.find({origincountry: country}).exec(function (err, docs){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
+			return next(new Error('No results found.'));
+		}
+		
+		res.json(docs);
+    });
+});
+
+// Get users by origincity
+router.get('/destinationcity/:city', function(req, res, next) {
+	
+	var city = req.params.city;
+	
+    User.find({destinationcity: city}).exec(function (err, docs){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
+			return next(new Error('No results found.'));
+		}
+		
+		res.json(docs);
+    });
+});
+
+// Get users by destinationcountry
+router.get('/destinationcountry/:country', function(req, res, next) {
+	
+	var country = req.params.country;
+	
+    User.find({destinationcountry: country}).exec(function (err, docs){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
+			return next(new Error('No results found.'));
+		}
 		
 		res.json(docs);
     });
