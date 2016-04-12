@@ -68,7 +68,29 @@
 							$state.go('index');
 						}
 					}]
-                });
+                })
+				.state('profile', {
+					url: '/profile/{id}',
+					templateUrl: 'user/profile.html',
+					controller: 'ProfileController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}],
+					resolve: {
+						profile: ['$stateParams', '$http', function($stateParams, $http) {
+							
+							function getUser(id) {
+								return $http.get('/users/profile/' + id).then(function(res){
+									return res.data;
+								});
+							};
+							
+							return getUser($stateParams.id);
+						}]
+					}
+				});
 
             $urlRouterProvider.otherwise('index');
         }

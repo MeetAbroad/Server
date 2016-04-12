@@ -12,25 +12,25 @@
 
 		$scope.resultsByDestinationCity = {};
 		
-		$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+		$http.get('/users/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 		}).success(function(data){
 			$scope.user = data;
 			
-			$http.get('http://localhost:3000/users/destinationcity/'+$scope.user.destinationcity, {
+			$http.get('/users/destinationcity/'+$scope.user.destinationcity, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).success(function(data){
 				// We have our results now
 				$scope.resultsByDestinationCity = data;
 				
-				console.log(data);
+				// Remove ours...
 			});
 		});
     }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
 		
-		$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+		$http.get('/users/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 		}).success(function(data){
 			$scope.user = data;
@@ -40,13 +40,13 @@
 			
 			$scope.selected = {};
 			
-			$http.get('http://localhost:3000/interests', {
+			$http.get('/interests', {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).success(function(data){
 				$scope.interests = data;
 			});
 			
-			$http.get('http://localhost:3000/interests/'+auth.currentUser(), {
+			$http.get('/interests/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).success(function(data){
 				$scope.myinterests = data;
@@ -147,7 +147,7 @@
 				});
 				
 				// Refresh options
-				/*$http.get('http://localhost:3000/users/'+auth.currentUser(), {
+				/*$http.get('/users/'+auth.currentUser(), {
 						headers: {Authorization: 'Bearer '+auth.getToken()}
 				}).success(function(data){
 					$scope.user = data;
@@ -184,6 +184,10 @@
 		};
 	}]);
 
+	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', function($scope, $http, auth, profile) {
+		$scope.profile = profile;
+	}]);
+		
 	app.controller('NavCtrl', ['$scope', 'auth', function($scope, auth){
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.currentUser = auth.currentUser;

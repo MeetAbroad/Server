@@ -15,7 +15,7 @@ var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 });*/
 
 // Get user data
-router.get('/:email', function(req, res, next) {
+router.get('/:email', auth, function(req, res, next) {
 	
 	var email = req.params.email;
 	
@@ -43,12 +43,41 @@ router.get('/:email', function(req, res, next) {
     });
 });
 
+// Does not require authentication as one would need to know the ID (which is rather complex) AND AngularJS would need 'auth' in the routes part...which I don't know how to implement at the time of writing this
+router.get('/profile/:id', function(req, res, next) {
+	
+	var id = req.params.id;
+	
+    User.findOne({_id: id}).exec(function (err, user){
+        if (err) {
+			return next(err);
+		}
+        if (!user) {
+			return next(new Error('User not found'));
+		}
+		
+		// Of course, we don't want to send out sensitive information though, only some fields
+
+        req.user = {};
+		req.user.firstname = user.firstname;
+		req.user.lastname = user.lastname;
+		req.user.origincountry = user.origincountry;
+		req.user.origincity = user.origincity;
+		req.user.destinationcountry = user.destinationcountry;
+		req.user.destinationcity = user.destinationcity;
+		req.user.age = user.age;
+		
+		res.json(req.user);
+    });
+});
+
+
 // Get users by origincity
-router.get('/origincity/:city', function(req, res, next) {
+router.get('/origincity/:city', auth, function(req, res, next) {
 	
 	var city = req.params.city;
 	
-    User.find({origincity: city}, '-hash -salt -email -interests -__v').exec(function (err, docs){
+    User.find({origincity: city, email: {'$ne': req.payload.email } }, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -62,11 +91,11 @@ router.get('/origincity/:city', function(req, res, next) {
 });
 
 // Get users by origincountry
-router.get('/origincountry/:country', function(req, res, next) {
+router.get('/origincountry/:country', auth, function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({origincountry: country}, '-hash -salt -email -interests -__v').exec(function (err, docs){
+    User.find({origincountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -80,11 +109,11 @@ router.get('/origincountry/:country', function(req, res, next) {
 });
 
 // Get users by origincity
-router.get('/destinationcity/:city', function(req, res, next) {
+router.get('/destinationcity/:city', auth, function(req, res, next) {
 	
 	var city = req.params.city;
 	
-    User.find({destinationcity: city}, '-hash -salt -email -interests -__v').exec(function (err, docs){
+    User.find({destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -98,11 +127,11 @@ router.get('/destinationcity/:city', function(req, res, next) {
 });
 
 // Get users by destinationcountry
-router.get('/destinationcountry/:country', function(req, res, next) {
+router.get('/destinationcountry/:country', auth, function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({destinationcountry: country}, '-hash -salt -email -interests -__v').exec(function (err, docs){
+    User.find({destinationcountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
