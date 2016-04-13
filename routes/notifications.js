@@ -32,7 +32,7 @@ router.get('/', auth, getUser, function(req, res, next) {
 	var id = req.user._id;
 	
 	// Get our received waiting to be accepted connections
-    Connection.find({uid2: id, accepted: false}).exec(function (err, docs){
+    Connection.find({uid2: id, accepted: false}).populate('uid1').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -40,7 +40,7 @@ router.get('/', auth, getUser, function(req, res, next) {
 		if (!docs || typeof docs === 'undefined' || docs.length == 0) {
 			return next(new Error('No results found.'));
 		}
-		
+
 		res.json({total: docs.length, notifications: docs});
     });
 });

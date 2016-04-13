@@ -48,3 +48,7 @@
 .orange a, .orange a:link, .orange a:hover, .orange a:active, .orange a:visited {
 	color: #FF7700;
 }
+
+.blue {
+	color: #0062FF;
+}
