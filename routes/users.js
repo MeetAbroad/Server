@@ -110,11 +110,12 @@ router.get('/origincountry/:country', auth, function(req, res, next) {
 });
 
 // Get users by origincity
-router.get('/destinationcity/:city', auth, function(req, res, next) {
+router.get('/destinationcity/:country/:city', auth, function(req, res, next) {
 	
 	var city = req.params.city;
+	var country = req.params.country;
 	
-    User.find({destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v').exec(function (err, docs){
+    User.find({destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}

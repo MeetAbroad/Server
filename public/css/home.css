@@ -1,3 +1,13 @@
+.inner_container {
+	background: #fdfdfd;
+	padding: 50px;
+	padding-top: 0;
+	
+	-webkit-box-shadow: 2px 3px 5px 4px rgba(0,0,0,0.25);
+	-moz-box-shadow: 2px 3px 5px 4px rgba(0,0,0,0.25);
+	box-shadow: 2px 3px 5px 4px rgba(0,0,0,0.25);
+}
+
 .suggestions .row {
 	padding: 10px;
 		border: 1px solid #ccc;

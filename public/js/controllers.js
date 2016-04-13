@@ -16,7 +16,7 @@
 				$scope.user = data;
 				
 				// Make suggestions available to the whole app
-				$http.get('/users/destinationcity/'+$scope.user.destinationcity, {
+				$http.get('/users/destinationcity/'+$scope.user.destinationcountry+'/'+$scope.user.destinationcity, {
 					headers: {Authorization: 'Bearer '+auth.getToken()}
 				}).then(function(response){
 					suggestions = response.data;
@@ -26,32 +26,38 @@
 					// Now get our connections so we can remove those users from this list
 					$http.get('/connections/'+$scope.user._id, {
 						headers: {Authorization: 'Bearer '+auth.getToken()}
-					}).then(function(response){
-						
-						var connections = response.data;
-
-						// Remove them
-						for (var i = suggestions.length - 1; i >= 0; i--) {
-							var s = suggestions[i];
+					}).then(function successCallback(response){
 							
-							for (var j = connections.length - 1; j >= 0; j--) {
-								var c = connections[j];
-		
-								if(
-									(s._id == c.uid1 && c.uid2 == $scope.user._id)
-									||
-									(s._id == c.uid2 && c.uid1 == $scope.user._id)
-								)
-								{
-									suggestions.splice(i, 1);
-									break;
+	
+							var connections = response.data;
+
+							// Remove them
+							for (var i = suggestions.length - 1; i >= 0; i--) {
+								var s = suggestions[i];
+								
+								for (var j = connections.length - 1; j >= 0; j--) {
+									var c = connections[j];
+			
+									if(
+										(s._id == c.uid1 && c.uid2 == $scope.user._id)
+										||
+										(s._id == c.uid2 && c.uid1 == $scope.user._id)
+									)
+									{
+										suggestions.splice(i, 1);
+										break;
+									}
 								}
 							}
+							
+							// We have our results now
+							$scope.resultsByDestinationCity = suggestions;
+							
+						}, function errorCallback(response){
+							// We have our results already
+							$scope.resultsByDestinationCity = suggestions;
 						}
-						
-						// We have our results now
-						$scope.resultsByDestinationCity = suggestions;
-					});
+					);
 				});
 			});
 			
@@ -250,14 +256,15 @@
     }]);
 	
 	
-	app.controller('AuthCtrl', ['$scope', '$state', 'auth', function($scope, $state, auth){
+	app.controller('AuthCtrl', ['$scope', '$state', 'auth', '$window', function($scope, $state, auth, $window){
 		$scope.user = {};
 
 		$scope.register = function(){
 			auth.register($scope.user).error(function(error){
 				$scope.error = error;
 			}).then(function(){
-				$state.go('home');
+				//$state.go('home');
+				$window.location.reload(); // hard refresh to re-load MainController
 			});
 		};
 
@@ -265,7 +272,8 @@
 			auth.logIn($scope.user).error(function(error){
 				$scope.error = error;
 			}).then(function(){
-				$state.go('home');
+				//$state.go('home');
+				$window.location.reload(); // hard refresh to re-load MainController
 			});
 		};
 	}]);

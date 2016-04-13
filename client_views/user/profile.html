@@ -1,56 +1,58 @@
 	<!-- Navigation -->
 	<user-navigation></user-navigation>
 
-
-    <!-- Page Content -->
-
+	
+	<!-- Page Content -->
 	<a  name="features"></a>
     <div class="content-section-a">
 
         <div class="container">
-			<div class="col-md-6 col-xs-6 profile_content">
-					<h2 style="margin-bottom: 40px">{{ profile.firstname }} {{ profile.lastname }}'s Profile</h2>
-					<div class="table-responsive">
-						<table class="table">
-							<tr>
-								<th scope="row" style="width: 50%">Origin Country:</th>
-								<td style="width: 50%; font-weight: lighter" class="text-right">{{ profile.origincountry }}</td>
-							</tr>
-							<tr>
-								<th scope="row">Origin City:</th>
-								<td class="text-right" style="font-weight: lighter">{{ profile.origincity }}</td>
-							</tr>
-							<tr>
-								<th scope="row">Destination Country:</th>
-								<td class="text-right" style="font-weight: lighter">{{ profile.destinationcountry }}</td>
-							</tr>
-							<tr>
-								<th scope="row">Destination City:</th>
-								<td class="text-right" style="font-weight: lighter">{{ profile.destinationcity }}</td>
-							</tr>
-							<tr>
-								<th scope="row">Age:</th>
-								<td class="text-right" style="font-weight: lighter">{{ profile.age }}</td>
-							</tr>
-						</table>
+			<div class="inner_container">
+				<div class="row toptitle">
+					<h2>MeetAbroad</h2>
+				</div>
+				
+				<div class="row">
+					<div class="col-md-6 col-xs-6 profile_content">
+						<div class="col-md-12">
+							<h3 style="margin-bottom: 40px">{{ profile.firstname }} {{ profile.lastname }}'s Profile</h3>
+							<div class="table-responsive">
+								<table class="table">
+									<tr>
+										<th scope="row" style="width: 50%">Origin Country:</th>
+										<td style="width: 50%; font-weight: lighter" class="text-right">{{ profile.origincountry }}</td>
+									</tr>
+									<tr>
+										<th scope="row">Origin City:</th>
+										<td class="text-right" style="font-weight: lighter">{{ profile.origincity }}</td>
+									</tr>
+									<tr>
+										<th scope="row">Destination Country:</th>
+										<td class="text-right" style="font-weight: lighter">{{ profile.destinationcountry }}</td>
+									</tr>
+									<tr>
+										<th scope="row">Destination City:</th>
+										<td class="text-right" style="font-weight: lighter">{{ profile.destinationcity }}</td>
+									</tr>
+									<tr>
+										<th scope="row">Age:</th>
+										<td class="text-right" style="font-weight: lighter">{{ profile.age }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 col-xs-6 v-center">
+						<div class="thumbnail_container">
+							<div class="thumbnail">
+								<img src="img/avatar-placeholder.png" class="img-responsive" />
+							</div>
+						</div>  
 					</div>
 				</div>
-				<div class="col-md-6 col-xs-6 v-center">
-					<div class="thumbnail_container">
-						<div class="thumbnail">
-							<img src="img/avatar-placeholder.png" class="img-responsive" />
-						</div>
-					</div>  
-				</div>
-            </div>
+			</div>
         </div>
         <!-- /.container -->
-
-    </div>
-    <!-- /.content-section-a -->
-
-
-    <div class="content-section-a">
     </div>
     <!-- /.content-section-a -->
 
