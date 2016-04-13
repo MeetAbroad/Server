@@ -291,6 +291,34 @@
 			
 			$scope.notifications = data;
 		});
+		
+		
+		// Accept request
+		$scope.acceptRequest = function(id){
+			
+			$http.post('/connections/accept/'+id, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).then(function successCallback(response) {
+				data = response.data;
+				
+				jQuery('#success_'+id+' span').text(data);
+				jQuery('#success_'+id).slideToggle();
+				jQuery('#send_'+id).remove();
+				
+				setTimeout(function() {
+					jQuery('#row_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			}, function errorCallback(response) {
+				data = response.data;
+				
+				jQuery('#error_'+id+' span').text(data);
+				jQuery('#error_'+id).slideToggle();
+				
+				setTimeout(function() {
+					jQuery('#error_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			});
+		};
 	}]);
 		
 	app.controller('NavCtrl', ['$scope', 'auth', function($scope, auth){
