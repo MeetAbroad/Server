@@ -9,30 +9,87 @@
 	}]);
 	
 	app.controller('HomeController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+		
+		$scope.getToken = auth.getToken();
 
 		$scope.resultsByDestinationCity = {};
 		
 		$http.get('/users/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).success(function(data){
+		}).then(function successCallback(response){
+			data = response.data;
+			
 			$scope.user = data;
+			
+			console.log(data);
 			
 			$http.get('/users/destinationcity/'+$scope.user.destinationcity, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).success(function(data){
-				// We have our results now
-				$scope.resultsByDestinationCity = data;
+			}).then(function(response){
+				suggestions = response.data;
 				
-				// Remove ours...
+				////// IMPORTANT: TODO this should probably be on the server-side...but meh...
+				
+				// Now get our connections so we can remove those users from this list
+				$http.get('/connections/'+$scope.user._id, {
+					headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).then(function(response){
+					
+					var connections = response.data;
+					
+					angular.forEach(suggestions, function(s, key) {
+						angular.forEach(connections, function(c, index) {
+							if(
+								(s._id == c.uid1 && c.uid2 == $scope.user._id)
+								||
+								(s._id == c.uid2 && c.uid1 == $scope.user._id)
+							)
+								suggestions.splice(index, 1);
+								
+						});
+					});
+							
+					// We have our results now
+					$scope.resultsByDestinationCity = suggestions;
+				});
 			});
 		});
+		
+		// Send request
+		$scope.sendRequest = function(id){
+			
+			$http.post('/connections/new/'+id, $scope.user, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).then(function successCallback(response) {
+				data = response.data;
+				
+				jQuery('#success_'+id+' span').text(data);
+				jQuery('#success_'+id).slideToggle();
+				jQuery('#send_'+id).remove();
+				
+				setTimeout(function() {
+					jQuery('#row_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			}, function errorCallback(response) {
+				data = response.data;
+				
+				jQuery('#error_'+id+' span').text(data);
+				jQuery('#error_'+id).slideToggle();
+				
+				setTimeout(function() {
+					jQuery('#error_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			});
+		};
     }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
 		
 		$http.get('/users/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).success(function(data){
+		}).then(function(response){
+			data = response.data;
+			
 			$scope.user = data;
 		});
 		
@@ -42,13 +99,17 @@
 			
 			$http.get('/interests', {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).success(function(data){
+			}).then(function(response){
+				data = response.data;
+				
 				$scope.interests = data;
 			});
 			
 			$http.get('/interests/'+auth.currentUser(), {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).success(function(data){
+			}).then(function(response){
+				data = response.data;
+				
 				$scope.myinterests = data;
 				
 				// Update our 'selected' array
@@ -105,7 +166,9 @@
 			
 			$http.post('/interests/update', {interests: myinterests}, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).success(function(data){
+			}).then(function(response){
+				data = response.data;
+				
 				// Success
 				$scope.success = {};
 				$scope.success.message = data.message;
@@ -119,7 +182,10 @@
 					  scrollTop: 0
 					});
 				});
-			}).error(function(){
+			}, function(response){
+				data = response.data;
+				$scope.error = { message: data };
+				
 				jQuery(document).ready(function(){
 					// Scroll to top by default
 					jQuery('html, body').animate({
@@ -134,7 +200,9 @@
 			
 			$http.post('/users/update', $scope.user, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).success(function(data){
+			}).then(function successCallback(response){
+				data = response.data;
+				
 				// Success
 				$scope.success = {};
 				$scope.success.message = data.message;
@@ -152,7 +220,10 @@
 				}).success(function(data){
 					$scope.user = data;
 				});*/
-			}).error(function(){
+			}, function errorCallback(response){
+				data = response.data;
+				$scope.error = { message: data };
+
 				jQuery(document).ready(function(){
 					// Scroll to top by default
 					jQuery('html, body').animate({

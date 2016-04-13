@@ -30,6 +30,7 @@ router.get('/:email', auth, function(req, res, next) {
 		// Of course, we don't want to send out sensitive information though, only some fields
 
         req.user = {};
+		req.user._id = user._id;
 		req.user.email = user.email;
 		req.user.firstname = user.firstname;
 		req.user.lastname = user.lastname;

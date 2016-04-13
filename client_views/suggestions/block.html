@@ -1,9 +1,61 @@
-<div class="row" ng-repeat="result in resultsByDestinationCity">
+<div class="row" ng-repeat="result in resultsByDestinationCity" id="row_{{ result._id }}">
 	<span style="float: right">{{ result.age }}</span>
 	<span style="float: left"><a href="#/profile/{{ result._id }}">{{ result.firstname }} {{ result.lastname }}</a></span><br />
 	
 	<span style="float: right">{{ result.destinationcity }} - {{ result.destinationcountry }} <i class="fa fa-plane" aria-hidden="true"></i></span>
 	<i class="fa fa-home" aria-hidden="true"></i> <span>{{ result.origincountry }} - {{ result.origincity }}</span><br />
 	
-	<div style="text-align: center; padding: 5px"><button type="button" class="btn btn-info btn-xs"><i class="fa fa-plus-circle" aria-hidden="true"></i> Send Request</button></div>
+	<div style="text-align: center; padding: 5px">
+		<button type="button" class="btn btn-info btn-xs" id="send_{{ result._id }}" ng-click="sendRequest(result._id)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Send Request</button>
+		<button type="button" class="btn btn-success btn-xs" id="success_{{ result._id }}" style="display: none"><span></span></button>
+	</div>
+	<div style="width: 70%; margin: auto; text-align: center"><div class="alert alert-danger row" id="error_{{ result._id }}" style="display: none"><span></span></div></div>
 </div>
+
+<script type="text/javascript">
+<!--
+/*$(document).ready(function(){
+	$(document).on("click", ".send_request", function() {
+		// Remove 'send_' so we get the ID
+		var ID = $(this).attr('id');
+		ID = ID.replace('send_', '');
+		
+		console.log($('#auth_token').text());
+
+		$.ajax({
+			type: "POST",
+			url: "/connections/new/"+ID,
+			headers: {
+				"Authorization": 'Bearer '+$('#auth_token').text()
+			},
+			dataType: "json",
+			success: function(data) {
+				if(data.hasOwnProperty('error'))
+				{
+					$('#error_'+ID+' span').text(data.error);
+					$('#error_'+ID).slideToggle();
+				}
+				else
+				{
+					$('#success_'+ID+' span').text(data);
+					$('#success_'+ID).slideToggle();
+					$('#send_'+ID).remove();
+				}
+				
+				setTimeout(function() {
+					$('#row_'+ID).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			},
+			error: function(){
+				$('#error_'+ID+' span').text("An unknown error has occurred.");
+				$('#error_'+ID).slideToggle();
+				
+				setTimeout(function() {
+					$('#error_'+ID).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			}
+		});
+	});
+});*/
+// -->
+</script>

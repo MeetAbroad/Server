@@ -12,6 +12,7 @@ process.env['MYSECRET'] = '123456123456123456';
 
 require('./models/User');
 require('./models/Interest');
+require('./models/Connection');
 
 require('./config/passport');
 
@@ -20,6 +21,7 @@ mongoose.connect('mongodb://localhost/meetabroad');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var interests = require('./routes/interests');
+var connections = require('./routes/connections');
 
 var app = express();
 
@@ -41,6 +43,7 @@ app.use(passport.initialize());
 app.use('/', routes); // Comment this for Production mode
 app.use('/users', users);
 app.use('/interests', interests);
+app.use('/connections', connections);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -55,11 +58,15 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
+    /*res.status(err.status || 500);
     res.render('error', {
       message: err.message,
       error: err
-    });
+    });*/
+	
+	// JSON errors
+	res.status(err.status || 500);
+	res.json(err.message);
   });
 }
 
