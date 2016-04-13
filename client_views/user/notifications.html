@@ -18,17 +18,17 @@
 							<h3>{{ notifications.total }} Unread Notifications</h3>
 						</div>
 						<table class="table table-striped">
-							<tr ng-repeat="notification in notifications.notifications">
+							<tr ng-repeat="notification in notifications.notifications" id="row_{{ notification._id }}">
 								<td><span class="blue">Friend Request</span></td>
 								<td>{{ notification.uid1.firstname }} {{ notification.uid1.lastname }}</td>
 								<td><i class="fa fa-home" aria-hidden="true"></i> <span>{{ notification.uid1.origincountry }} - {{ notification.uid1.origincity }}</span></td>
 								<td><i class="fa fa-plane" aria-hidden="true"></i> <span>{{ notification.uid1.destinationcountry }}- {{ notification.uid1.destinationcity }}</span></td>
 								<td style="align: center">
-									<button type="button" class="btn btn-info btn-xs" id="accept_{{ notification._id }}" ng-click="sendRequest(notification._id)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Accept</button>
-									<button type="button" class="btn btn-warning btn-xs" id="reject_{{ notification._id }}" ng-click="sendRequest(notification._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
+									<button type="button" class="btn btn-info btn-xs" id="accept_{{ notification._id }}" ng-click="acceptRequest(notification._id)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Accept</button>
+									<button type="button" class="btn btn-warning btn-xs" id="reject_{{ notification._id }}" ng-click="rejectRequest(notification._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
 									
-									<div style="width: 70%; margin: auto; text-align: center"><div class="alert alert-danger row" id="success_{{ result._id }}" style="display: none"><span></span></div></div>
-									<div style="width: 70%; margin: auto; text-align: center"><div class="alert alert-success row" id="error_{{ result._id }}" style="display: none"><span></span></div></div>
+									<div class="alert-success" id="success_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
+									<div class="alert-danger" id="error_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
 								</td>
 							</tr>
 						</table>

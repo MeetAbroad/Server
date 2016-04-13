@@ -96,4 +96,50 @@ router.post('/new/:id', auth, getUser, function(req, res, next) {
     });
 });
 
+// Accept connection
+router.post('/accept/:id', auth, getUser, function(req, res, next) {
+	
+	var id = req.params.id;
+	
+    Connection.findOne({_id: id, uid2: req.user._id, accepted: false}).exec(function (err, connection){
+        if (err) {
+			return next(err);
+		}
+        if (!connection) {
+			return next(new Error('Request not found.'));
+		}
+		
+		connection.accepted = true;
+
+		connection.save(function(err, post){
+			if(err){ return next(err); }
+
+			res.json("Request accepted!");
+		});
+    });
+});
+
+// Reject connection
+router.post('/reject/:id', auth, getUser, function(req, res, next) {
+	
+	var id = req.params.id;
+	
+    Connection.findOne({_id: id, uid2: req.user._id, accepted: false}).exec(function (err, connection){
+        if (err) {
+			return next(err);
+		}
+        if (!connection) {
+			return next(new Error('Request not found.'));
+		}
+		
+		connection.accepted = true;
+
+		connection.remove(function(err, post){
+			if(err){ return next(err); }
+
+			res.json("Request rejected!");
+		});
+    });
+});
+
 module.exports = router;

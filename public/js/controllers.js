@@ -296,20 +296,57 @@
 		// Accept request
 		$scope.acceptRequest = function(id){
 			
-			$http.post('/connections/accept/'+id, {
+			$http.post('/connections/accept/'+id, $scope.user, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).then(function successCallback(response) {
 				data = response.data;
 				
+				jQuery('#reject_'+id).slideToggle();
+				jQuery('#accept_'+id).slideToggle();
+				
 				jQuery('#success_'+id+' span').text(data);
 				jQuery('#success_'+id).slideToggle();
-				jQuery('#send_'+id).remove();
 				
 				setTimeout(function() {
 					jQuery('#row_'+id).slideToggle();
 				}, 3000); // <-- time in milliseconds
 			}, function errorCallback(response) {
 				data = response.data;
+				
+				jQuery('#reject_'+id).slideToggle();
+				jQuery('#accept_'+id).slideToggle();
+				
+				jQuery('#error_'+id+' span').text(data);
+				jQuery('#error_'+id).slideToggle();
+				
+				setTimeout(function() {
+					jQuery('#error_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			});
+		};
+		
+		// Reject request
+		$scope.rejectRequest = function(id){
+			
+			$http.post('/connections/reject/'+id, $scope.user, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).then(function successCallback(response) {
+				data = response.data;
+				
+				jQuery('#reject_'+id).slideToggle();
+				jQuery('#accept_'+id).slideToggle();
+				
+				jQuery('#success_'+id+' span').text(data);
+				jQuery('#success_'+id).slideToggle();
+				
+				setTimeout(function() {
+					jQuery('#row_'+id).slideToggle();
+				}, 3000); // <-- time in milliseconds
+			}, function errorCallback(response) {
+				data = response.data;
+				
+				jQuery('#reject_'+id).slideToggle();
+				jQuery('#accept_'+id).slideToggle();
 				
 				jQuery('#error_'+id+' span').text(data);
 				jQuery('#error_'+id).slideToggle();
