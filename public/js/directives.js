@@ -28,4 +28,11 @@
             templateUrl: "suggestions/block.html"
         };
     });
+	
+	app.directive("unreadNotifications", function() {
+        return {
+            restrict: 'E',
+            templateUrl: "common/notifications.html"
+        };
+    });
 })();

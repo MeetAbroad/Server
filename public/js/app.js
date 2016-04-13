@@ -90,6 +90,16 @@
 							return getUser($stateParams.id);
 						}]
 					}
+				})
+				.state('notifications', {
+					url: '/notifications',
+					templateUrl: 'user/notifications.html',
+					controller: 'NotificationsController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}]
 				});
 
             $urlRouterProvider.otherwise('index');
@@ -144,6 +154,12 @@
 			$window.localStorage.removeItem('meetabroad-token');
 			
 			$location.path('/');
+		};
+		
+		auth.getUser = function(){
+			return $http.get('/users/'+auth.currentUser(), {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			});
 		};
 
 		return auth;

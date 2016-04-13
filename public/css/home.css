@@ -44,3 +44,7 @@
     max-height:100%;
     max-width:100%;
 }
+
+.orange a, .orange a:link, .orange a:hover, .orange a:active, .orange a:visited {
+	color: #FF7700;
+}

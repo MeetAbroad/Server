@@ -1,86 +1,101 @@
 (function() {
     var app = angular.module('MeetAbroad');
 	
-	app.controller('MainController', ['$scope', 'auth', function($scope, auth) {
+	app.controller('MainController', ['$scope', 'auth', '$http', function($scope, auth, $http) {
 		
-		// Our styleSheets
 		if(auth.isLoggedIn())
+		{
+			// Our logged in styleSheets
 			$scope.stylesheets = ['css/home.css'];
+			
+			$scope.resultsByDestinationCity = {};
+			
+			// Make user available to the whole app
+			auth.getUser().then(function successCallback(response){
+				data = response.data;
+				$scope.user = data;
+				
+				// Make suggestions available to the whole app
+				$http.get('/users/destinationcity/'+$scope.user.destinationcity, {
+					headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).then(function(response){
+					suggestions = response.data;
+					
+					////// IMPORTANT: TODO this should probably be on the server-side...but meh...
+					
+					// Now get our connections so we can remove those users from this list
+					$http.get('/connections/'+$scope.user._id, {
+						headers: {Authorization: 'Bearer '+auth.getToken()}
+					}).then(function(response){
+						
+						var connections = response.data;
+
+						// Remove them
+						for (var i = suggestions.length - 1; i >= 0; i--) {
+							var s = suggestions[i];
+							
+							for (var j = connections.length - 1; j >= 0; j--) {
+								var c = connections[j];
+		
+								if(
+									(s._id == c.uid1 && c.uid2 == $scope.user._id)
+									||
+									(s._id == c.uid2 && c.uid1 == $scope.user._id)
+								)
+								{
+									suggestions.splice(i, 1);
+									break;
+								}
+							}
+						}
+						
+						// We have our results now
+						$scope.resultsByDestinationCity = suggestions;
+					});
+				});
+			});
+			
+			$scope.unreadNotifications = 0;
+			
+			$http.get('/notifications/total', {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).then(function(response){
+				data = response.data;
+				
+				$scope.unreadNotifications = data;
+			});
+			
+			// Send request
+			$scope.sendRequest = function(id){
+				
+				$http.post('/connections/new/'+id, $scope.user, {
+					headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).then(function successCallback(response) {
+					data = response.data;
+					
+					jQuery('#success_'+id+' span').text(data);
+					jQuery('#success_'+id).slideToggle();
+					jQuery('#send_'+id).remove();
+					
+					setTimeout(function() {
+						jQuery('#row_'+id).slideToggle();
+					}, 3000); // <-- time in milliseconds
+				}, function errorCallback(response) {
+					data = response.data;
+					
+					jQuery('#error_'+id+' span').text(data);
+					jQuery('#error_'+id).slideToggle();
+					
+					setTimeout(function() {
+						jQuery('#error_'+id).slideToggle();
+					}, 3000); // <-- time in milliseconds
+				});
+			};
+		}
 	}]);
 	
 	app.controller('HomeController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
-		
-		$scope.getToken = auth.getToken();
 
-		$scope.resultsByDestinationCity = {};
-		
-		$http.get('/users/'+auth.currentUser(), {
-				headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).then(function successCallback(response){
-			data = response.data;
-			
-			$scope.user = data;
-			
-			console.log(data);
-			
-			$http.get('/users/destinationcity/'+$scope.user.destinationcity, {
-				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).then(function(response){
-				suggestions = response.data;
-				
-				////// IMPORTANT: TODO this should probably be on the server-side...but meh...
-				
-				// Now get our connections so we can remove those users from this list
-				$http.get('/connections/'+$scope.user._id, {
-					headers: {Authorization: 'Bearer '+auth.getToken()}
-				}).then(function(response){
-					
-					var connections = response.data;
-					
-					angular.forEach(suggestions, function(s, key) {
-						angular.forEach(connections, function(c, index) {
-							if(
-								(s._id == c.uid1 && c.uid2 == $scope.user._id)
-								||
-								(s._id == c.uid2 && c.uid1 == $scope.user._id)
-							)
-								suggestions.splice(index, 1);
-								
-						});
-					});
-							
-					// We have our results now
-					$scope.resultsByDestinationCity = suggestions;
-				});
-			});
-		});
-		
-		// Send request
-		$scope.sendRequest = function(id){
-			
-			$http.post('/connections/new/'+id, $scope.user, {
-				headers: {Authorization: 'Bearer '+auth.getToken()}
-			}).then(function successCallback(response) {
-				data = response.data;
-				
-				jQuery('#success_'+id+' span').text(data);
-				jQuery('#success_'+id).slideToggle();
-				jQuery('#send_'+id).remove();
-				
-				setTimeout(function() {
-					jQuery('#row_'+id).slideToggle();
-				}, 3000); // <-- time in milliseconds
-			}, function errorCallback(response) {
-				data = response.data;
-				
-				jQuery('#error_'+id+' span').text(data);
-				jQuery('#error_'+id).slideToggle();
-				
-				setTimeout(function() {
-					jQuery('#error_'+id).slideToggle();
-				}, 3000); // <-- time in milliseconds
-			});
-		};
     }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
@@ -257,6 +272,17 @@
 
 	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', function($scope, $http, auth, profile) {
 		$scope.profile = profile;
+	}]);
+	
+	app.controller('NotificationsController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+		
+		$http.get('/notifications', {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).then(function(response){
+			data = response.data;
+			
+			$scope.notifications = data;
+		});
 	}]);
 		
 	app.controller('NavCtrl', ['$scope', 'auth', function($scope, auth){
