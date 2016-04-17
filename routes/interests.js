@@ -7,7 +7,8 @@ var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 
 var Interest = mongoose.model('Interest');
 
-router.get('/', auth, function(req, res, next) {
+//router.get('/', auth, function(req, res, next) {
+router.get('/', function(req, res, next) {
 	Interest.find(function(err, interests){
 		if(err){ return next(err); }
 
