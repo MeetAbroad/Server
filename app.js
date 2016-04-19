@@ -14,8 +14,6 @@ require('./models/User');
 require('./models/Interest');
 require('./models/Connection');
 
-require('./config/passport');
-
 mongoose.connect('mongodb://localhost/meetabroad');
 
 var routes = require('./routes/index');
@@ -62,7 +60,11 @@ app.use(express.static(path.join(__dirname, 'client_views')));
 
 app.use(passport.initialize());
 
-app.use('/', routes); // Comment this for Production mode
+// Initialize Passport
+var initPassport = require('./config/init');
+initPassport(passport);
+
+app.use('/', routes);
 app.use('/users', users);
 app.use('/interests', interests);
 app.use('/connections', connections);
@@ -81,15 +83,15 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    /*res.status(err.status || 500);
+    res.status(err.status || 500);
     res.render('error', {
       message: err.message,
       error: err
-    });*/
+    });
 	
 	// JSON errors
-	res.status(err.status || 500);
-	res.json(err.message);
+	/*res.status(err.status || 500);
+	res.json(err.message);*/
   });
 }
 

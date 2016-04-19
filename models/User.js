@@ -18,7 +18,12 @@ var UserSchema = new mongoose.Schema({
     destinationcountry: { type: String, required: true },
     destinationcity: { type: String, required: true },
 	
-	interests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interest' }]
+	interests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interest' }],
+	
+	fb: {
+		id: String,
+		access_token: String
+	}
 });
 
 UserSchema.methods.setPassword = function(password){
