@@ -1,64 +1,74 @@
 (function() {
     var app = angular.module('MeetAbroad');
 	
-	app.controller('MainController', ['$scope', 'auth', '$http', function($scope, auth, $http) {
+	app.controller('MainController', ['$scope', 'auth', '$http', '$state', function($scope, auth, $http, $state) {
 		
 		if(auth.isLoggedIn())
 		{
 			// Our logged in styleSheets
 			$scope.stylesheets = ['css/home.css'];
 			
-			$scope.resultsByDestinationCity = {};
+			$scope.resultsByDestinationCity = [];
 			
 			// Make user available to the whole app
 			auth.getUser().then(function successCallback(response){
-				data = response.data;
-				$scope.user = data;
+				user = response.data;
 				
-				// Make suggestions available to the whole app
-				$http.get('/users/destinationcity/'+$scope.user.destinationcountry+'/'+$scope.user.destinationcity, {
-					headers: {Authorization: 'Bearer '+auth.getToken()}
-				}).then(function(response){
-					suggestions = response.data;
-					
-					////// IMPORTANT: TODO this should probably be on the server-side...but meh...
-					
-					// Now get our connections so we can remove those users from this list
-					$http.get('/connections/'+$scope.user._id, {
+				// Do we have a destination city, etc? If not, it means we haven't completed our registration (facebook login for example)
+				// We check if it's not undefined -> if it's not, then we have a completed registration in hands
+				if(user.destinationcity !== '__undefined__')
+				{
+					// Make suggestions available to the whole app
+					$http.get('/users/destinationcity/'+user.destinationcountry+'/'+user.destinationcity, {
 						headers: {Authorization: 'Bearer '+auth.getToken()}
-					}).then(function successCallback(response){
-							
-	
-							var connections = response.data;
-
-							// Remove them
-							for (var i = suggestions.length - 1; i >= 0; i--) {
-								var s = suggestions[i];
+					}).then(function(response){
+						
+						suggestions = response.data;
+						
+						////// IMPORTANT: TODO this should probably be on the server-side...but meh...
+						
+						// Now get our connections so we can remove those users from this list
+						$http.get('/connections/'+user._id, {
+							headers: {Authorization: 'Bearer '+auth.getToken()}
+						}).then(function successCallback(response){
 								
-								for (var j = connections.length - 1; j >= 0; j--) {
-									var c = connections[j];
-			
-									if(
-										(s._id == c.uid1 && c.uid2 == $scope.user._id)
-										||
-										(s._id == c.uid2 && c.uid1 == $scope.user._id)
-									)
-									{
-										suggestions.splice(i, 1);
-										break;
+		
+								var connections = response.data;
+
+								// Remove them
+								for (var i = suggestions.length - 1; i >= 0; i--) {
+									var s = suggestions[i];
+									
+									for (var j = connections.length - 1; j >= 0; j--) {
+										var c = connections[j];
+				
+										if(
+											(s._id == c.uid1 && c.uid2 == user._id)
+											||
+											(s._id == c.uid2 && c.uid1 == user._id)
+										)
+										{
+											suggestions.splice(i, 1);
+											break;
+										}
 									}
 								}
+								
+								// We have our results now
+								$scope.resultsByDestinationCity = suggestions;
+								
+							}, function errorCallback(response){
+								// We have our results already
+								$scope.resultsByDestinationCity = suggestions;
 							}
-							
-							// We have our results now
-							$scope.resultsByDestinationCity = suggestions;
-							
-						}, function errorCallback(response){
-							// We have our results already
-							$scope.resultsByDestinationCity = suggestions;
-						}
-					);
-				});
+						);
+					});
+				}
+				else
+				{
+					// If current state != facebook -> go back to complete details page
+					console.log($state.current);
+				}
 			});
 			
 			$scope.unreadNotifications = 0;
@@ -74,7 +84,7 @@
 			// Send request
 			$scope.sendRequest = function(id){
 				
-				$http.post('/connections/new/'+id, $scope.user, {
+				$http.post('/connections/new/'+id, user, {
 					headers: {Authorization: 'Bearer '+auth.getToken()}
 				}).then(function successCallback(response) {
 					data = response.data;
@@ -84,8 +94,20 @@
 					jQuery('#send_'+id).remove();
 					
 					setTimeout(function() {
-						jQuery('#row_'+id).slideToggle();
-					}, 3000); // <-- time in milliseconds
+						jQuery('#row_'+id).slideToggle("fast", function() {
+							// Remove from scope
+							for (var i=0; i<$scope.resultsByDestinationCity.length; i++) {
+
+								if($scope.resultsByDestinationCity[i]._id == id)
+								{
+									$scope.resultsByDestinationCity.splice(i, 1);
+									break;
+								}
+							}
+						});
+						
+						
+					}, 1000); // <-- time in milliseconds
 				}, function errorCallback(response) {
 					data = response.data;
 					
@@ -104,16 +126,10 @@
 
     }]);
 
-    app.controller('UserController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+    app.controller('UserController', ['$scope', '$http', 'auth', 'user', function($scope, $http, auth, user) {
 		
-		$http.get('/users/'+auth.currentUser(), {
-				headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).then(function(response){
-			data = response.data;
-			
-			$scope.user = data;
-		});
-		
+		$scope.user = user;
+
 		$scope.refreshInterests = function(){
 			
 			$scope.selected = {};
@@ -362,5 +378,47 @@
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.currentUser = auth.currentUser;
 		$scope.logOut = auth.logOut;
+	}]);
+	
+	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', function($state, $scope, auth, user){
+		
+		$scope.user = user;
+		
+		if($scope.regCompleted)
+		{
+			// Go to home
+			$state.go('home');
+		}
+		else
+		{
+			// Erase our default fields
+			$scope.user.destinationcity = '';
+			$scope.user.destinationcountry = '';
+			$scope.user.origincity = '';
+			$scope.user.origincountry = '';
+			$scope.user.age = '';
+			
+			// Update our options
+			$scope.updateOptions = function(){
+				
+				$http.post('/users/update', $scope.user, {
+					headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).then(function successCallback(response){
+					data = response.data;
+					
+					$state.go('home');
+				}, function errorCallback(response){
+					data = response.data;
+					$scope.error = { message: data };
+
+					jQuery(document).ready(function(){
+						// Scroll to top by default
+						jQuery('html, body').animate({
+						  scrollTop: 0
+						});
+					});
+				});
+			};
+		}
 	}]);
 })();

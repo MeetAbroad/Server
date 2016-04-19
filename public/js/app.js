@@ -57,7 +57,21 @@
 						if(!auth.isLoggedIn()){
 							$state.go('index');
 						}
-					}]
+					}],
+					resolve: {
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser(id) {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							return getUser($stateParams.id);
+						}]
+					}
                 })
 				.state('options', {
                     url: '/options',
@@ -67,7 +81,21 @@
 						if(!auth.isLoggedIn()){
 							$state.go('index');
 						}
-					}]
+					}],
+					resolve: {
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser(id) {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							return getUser($stateParams.id);
+						}]
+					}
                 })
 				.state('profile', {
 					url: '/profile/{id}',
@@ -105,10 +133,12 @@
 				.state('facebook', {
 					url: '/facebook/{token}',
 					templateUrl: 'auth/facebook.html',
+					controller: 'FacebookController',
 					onEnter: ['$stateParams', '$state', 'auth', '$window', function($stateParams, $state, auth, $window){
 						
 						if(auth.isLoggedIn()){
-							$state.go('home');
+							
+							// Proceed -> Let the Main Controller handle this
 						}
 						else {
 							
@@ -122,7 +152,21 @@
 								
 							$window.location.reload();
 						}
-					}]
+					}],
+					resolve: {
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							return getUser();
+						}]
+					}
 				});
 
             $urlRouterProvider.otherwise('index');
