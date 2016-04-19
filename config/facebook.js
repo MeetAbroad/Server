@@ -10,6 +10,7 @@ module.exports = function(passport) {
         clientID        : fbConfig.appID,
         clientSecret    : fbConfig.appSecret,
         callbackURL     : fbConfig.callbackUrl,
+		enableProof: true,
 		profileFields: ['id', "first_name", "gender", "last_name", "email"]
     },
 
@@ -20,7 +21,7 @@ module.exports = function(passport) {
 		process.nextTick(function() {
 
 			// find the user in the database based on their facebook id
-	        User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
+	        User.findOne({ 'fb.id' : profile.id }, function(err, user) {
 
 	        	// if there is an error, stop everything and return that
 	        	// ie an error connecting to the database

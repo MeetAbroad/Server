@@ -100,6 +100,26 @@
 							$state.go('index');
 						}
 					}]
+				})
+				// Used to get JWT from Facebook authentication method 
+				.state('facebook', {
+					url: '/facebook/{token}',
+					templateUrl: 'auth/facebook.html',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}],
+					resolve: {
+						profile: ['$stateParams', '$http', function($stateParams, $http) {
+							
+							var token = $stateParams.token;
+							
+							auth.saveToken(token);
+							
+							$window.location.reload()
+						}]
+					}
 				});
 
             $urlRouterProvider.otherwise('index');
