@@ -105,21 +105,24 @@
 				.state('facebook', {
 					url: '/facebook/{token}',
 					templateUrl: 'auth/facebook.html',
-					onEnter: ['$state', 'auth', function($state, auth){
-						if(!auth.isLoggedIn()){
-							$state.go('index');
+					onEnter: ['$stateParams', '$state', 'auth', '$window', function($stateParams, $state, auth, $window){
+						
+						if(auth.isLoggedIn()){
+							$state.go('home');
 						}
-					}],
-					resolve: {
-						profile: ['$stateParams', '$http', function($stateParams, $http) {
+						else {
 							
+							// Then we're probably trying to log in!
 							var token = $stateParams.token;
 							
-							auth.saveToken(token);
+							console.log(token);
 							
-							$window.location.reload()
-						}]
-					}
+							if(token !== 'undefined' && token.length > 0)
+								auth.saveToken(token);
+								
+							$window.location.reload();
+						}
+					}]
 				});
 
             $urlRouterProvider.otherwise('index');
@@ -141,6 +144,7 @@
 			var token = auth.getToken();
 
 			if(token){
+				
 				var payload = JSON.parse($window.atob(token.split('.')[1]));
 
 				return payload.exp > Date.now() / 1000;

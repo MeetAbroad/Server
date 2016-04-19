@@ -73,7 +73,11 @@ router.get('/login/facebook/callback',
 			
 			console.log('found user '+doc.firstname);
 			
-			//res.redirect('#/facebook/' + doc.generateJWT());
+			var jwt = doc.generateJWT();
+			
+			console.log('found jwt '+jwt);
+			
+			res.redirect('/#/facebook/' + jwt);
 		});
 });
 

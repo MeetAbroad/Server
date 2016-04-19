@@ -53,7 +53,7 @@ module.exports = function(passport) {
 					// save our user to the database
 	                newUser.save(function(err) {
 	                    if (err)
-	                        return res.status(401).json(info); 
+	                        throw err;
 
 	                    // if successful, return the new user
 	                    return done(null, newUser);
