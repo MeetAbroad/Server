@@ -47,7 +47,24 @@
 						if(!auth.isLoggedIn()){
 							$state.go('index');
 						}
-					}]
+					}],
+					resolve: { // Resolve the 'user' object -> this runs BEFORE the 'onEnter' so we must check when returning, if we are authenticated (otherwise we won't be able to get the current user due to undefined token)
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
+						}]
+					}
                 })
                 .state('interests', {
                     url: '/interests',
@@ -58,10 +75,10 @@
 							$state.go('index');
 						}
 					}],
-					resolve: {
+					resolve: { // Resolve the 'user' object
 						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
 							
-							function getUser(id) {
+							function getUser() {
 								return $http.get('/users/' + auth.currentUser(), {
 									headers: {Authorization: 'Bearer '+auth.getToken()}
 								}).then(function(res){
@@ -69,7 +86,10 @@
 								});
 							};
 							
-							return getUser($stateParams.id);
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
 						}]
 					}
                 })
@@ -82,10 +102,10 @@
 							$state.go('index');
 						}
 					}],
-					resolve: {
+					resolve: { // Resolve the 'user' object
 						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
 							
-							function getUser(id) {
+							function getUser() {
 								return $http.get('/users/' + auth.currentUser(), {
 									headers: {Authorization: 'Bearer '+auth.getToken()}
 								}).then(function(res){
@@ -93,7 +113,10 @@
 								});
 							};
 							
-							return getUser($stateParams.id);
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
 						}]
 					}
                 })
@@ -106,7 +129,7 @@
 							$state.go('index');
 						}
 					}],
-					resolve: {
+					resolve: { // Resolve the 'user' object
 						profile: ['$stateParams', '$http', function($stateParams, $http) {
 							
 							function getUser(id) {
@@ -127,33 +150,8 @@
 						if(!auth.isLoggedIn()){
 							$state.go('index');
 						}
-					}]
-				})
-				// Used to get JWT from Facebook authentication method 
-				.state('facebook', {
-					url: '/facebook/{token}',
-					templateUrl: 'auth/facebook.html',
-					controller: 'FacebookController',
-					onEnter: ['$stateParams', '$state', 'auth', '$window', function($stateParams, $state, auth, $window){
-						
-						if(auth.isLoggedIn()){
-							
-							// Proceed -> Let the Main Controller handle this
-						}
-						else {
-							
-							// Then we're probably trying to log in!
-							var token = $stateParams.token;
-							
-							console.log(token);
-							
-							if(token !== 'undefined' && token.length > 0)
-								auth.saveToken(token);
-								
-							$window.location.reload();
-						}
 					}],
-					resolve: {
+					resolve: { // Resolve the 'user' object
 						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
 							
 							function getUser() {
@@ -164,7 +162,77 @@
 								});
 							};
 							
-							return getUser();
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
+						}]
+					}
+				})
+				.state('finishreg', {
+					url: '/finishreg',
+					templateUrl: 'auth/finishreg.html',
+					controller: 'FinishregController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}],
+					resolve: { // Resolve the 'user' object
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
+						}]
+					}
+				})
+				// Used to get JWT from Facebook authentication method 
+				.state('facebook', {
+					url: '/facebook/{token}',
+					templateUrl: 'auth/facebook.html',
+					controller: 'FacebookController',
+					onEnter: ['$stateParams', '$state', 'auth', '$window', function($stateParams, $state, auth, $window){
+						
+						if(!auth.isLoggedIn()) {
+							
+							// Then we're probably trying to log in!
+							var token = $stateParams.token;
+							
+							if(token !== 'undefined' && token.length > 0)
+								auth.saveToken(token);
+								
+							$window.location.reload(); // After this reload, we should be on this same page, with log in done
+						}
+						else
+						{
+							// We're on this page...logged in -> Let the FacebookController handle it!
+						}
+					}],
+					resolve: { // Resolve the 'user' object
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
 						}]
 					}
 				});

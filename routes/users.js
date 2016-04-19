@@ -148,6 +148,13 @@ router.get('/destinationcountry/:country', auth, function(req, res, next) {
 
 router.post('/update', auth, function(req, res, next) {
 	
+	if(	!req.body.firstname || !req.body.lastname
+		|| !req.body.origincountry || !req.body.origincity
+		|| !req.body.destinationcountry|| !req.body.destinationcity)
+	{
+		return res.status(400).json('Please fill out all fields');
+	}
+	
 	var email = req.payload.email;
 	
     User.findOne({email: email}).exec(function (err, user){

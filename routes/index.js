@@ -12,32 +12,44 @@ router.get('/', function(req, res, next) {
 var User = mongoose.model('User');
 
 router.post('/register', function(req, res, next){
-  if(!req.body.email || !req.body.password
-	|| !req.body.firstname || !req.body.lastname
-	|| !req.body.origincountry || !req.body.origincity
-	|| !req.body.destinationcountry|| !req.body.destinationcity
-	|| !req.body.agree) {
-    return res.status(400).json({message: 'Please fill out all fields'});
-  }
+	if(!req.body.email || !req.body.password
+		|| !req.body.firstname || !req.body.lastname
+		|| !req.body.origincountry || !req.body.origincity
+		|| !req.body.destinationcountry|| !req.body.destinationcity
+		|| !req.body.agree)
+	{
+		return res.status(400).json({message: 'Please fill out all fields.'});
+	}
 
-  var user = new User();
+  // Anyone with the same e-mail?
+  User.findOne({email: req.body.email}).exec(function (err, user){
+        if (err) {
+			return next(err);
+		}
+		
+        if (user) {
+			return res.status(400).json({message: 'A user with the same e-mail already exists.'});
+		}
+		
+		var user = new User();
 
-  user.email = req.body.email;
-  user.firstname = req.body.firstname;
-  user.lastname = req.body.lastname;
-  user.origincountry = req.body.origincountry;
-  user.origincity = req.body.origincity;
-  user.destinationcountry = req.body.destinationcountry;
-  user.destinationcity = req.body.destinationcity;
-  user.age = req.body.age;
+		user.email = req.body.email;
+		user.firstname = req.body.firstname;
+		user.lastname = req.body.lastname;
+		user.origincountry = req.body.origincountry;
+		user.origincity = req.body.origincity;
+		user.destinationcountry = req.body.destinationcountry;
+		user.destinationcity = req.body.destinationcity;
+		user.age = req.body.age;
 
-  user.setPassword(req.body.password)
+		user.setPassword(req.body.password)
 
-  user.save(function (err){
-    if(err){ return next(err); }
+		user.save(function (err){
+			if(err){ return next(err); }
 
-    return res.json({token: user.generateJWT()})
-  });
+			return res.json({token: user.generateJWT()})
+		});
+	});
 });
 
 router.post('/login', function(req, res, next){

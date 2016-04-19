@@ -64,11 +64,6 @@
 						);
 					});
 				}
-				else
-				{
-					// If current state != facebook -> go back to complete details page
-					console.log($state.current);
-				}
 			});
 			
 			$scope.unreadNotifications = 0;
@@ -122,13 +117,30 @@
 		}
 	}]);
 	
-	app.controller('HomeController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
-
+	app.controller('HomeController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
     }]);
 
-    app.controller('UserController', ['$scope', '$http', 'auth', 'user', function($scope, $http, auth, user) {
+    app.controller('UserController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
 		
 		$scope.user = user;
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
 
 		$scope.refreshInterests = function(){
 			
@@ -271,34 +283,8 @@
 		};
     }]);
 	
-	
-	app.controller('AuthCtrl', ['$scope', '$state', 'auth', '$window', function($scope, $state, auth, $window){
-		$scope.user = {};
-
-		$scope.register = function(){
-			auth.register($scope.user).error(function(error){
-				$scope.error = error;
-			}).then(function(){
-				//$state.go('home');
-				$window.location.reload(); // hard refresh to re-load MainController
-			});
-		};
-
-		$scope.logIn = function(){
-			auth.logIn($scope.user).error(function(error){
-				$scope.error = error;
-			}).then(function(){
-				//$state.go('home');
-				$window.location.reload(); // hard refresh to re-load MainController
-			});
-		};
-	}]);
-
-	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', function($scope, $http, auth, profile) {
-		$scope.profile = profile;
-	}]);
-	
-	app.controller('NotificationsController', ['$scope', '$http', 'auth', function($scope, $http, auth) {
+	app.controller('NotificationsController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
+		$scope.user = user;
 		
 		$http.get('/notifications', {
 			headers: {Authorization: 'Bearer '+auth.getToken()}
@@ -373,52 +359,107 @@
 			});
 		};
 	}]);
-		
-	app.controller('NavCtrl', ['$scope', 'auth', function($scope, auth){
-		$scope.isLoggedIn = auth.isLoggedIn;
-		$scope.currentUser = auth.currentUser;
-		$scope.logOut = auth.logOut;
-	}]);
 	
-	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', function($state, $scope, auth, user){
+	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', '$state', function($state, $scope, auth, user, $state) {
 		
 		$scope.user = user;
 		
-		if($scope.regCompleted)
+		if(user.destinationcity === '__undefined__')
+		{
+			// Go to finish registration
+			$state.go('finishreg');
+		}
+		else
 		{
 			// Go to home
 			$state.go('home');
 		}
-		else
+	}]);
+	
+	app.controller('FinishregController', ['$scope', '$http', 'auth', 'user', '$state', '$window', function($scope, $http, auth, user, $state, $window) {
+		
+		if(user.destinationcity !== '__undefined__')
 		{
-			// Erase our default fields
-			$scope.user.destinationcity = '';
-			$scope.user.destinationcountry = '';
-			$scope.user.origincity = '';
-			$scope.user.origincountry = '';
-			$scope.user.age = '';
+			// Already finished...
+			$state.go('home');
+		}
+		
+		$scope.user = user;
+	
+		// Erase our default fields
+		$scope.user.destinationcity = '';
+		$scope.user.destinationcountry = '';
+		$scope.user.origincity = '';
+		$scope.user.origincountry = '';
+		$scope.user.age = '';
+		
+		// Update our options
+		$scope.updateOptions = function(){
 			
-			// Update our options
-			$scope.updateOptions = function(){
+			$http.post('/users/update', $scope.user, {
+				headers: {Authorization: 'Bearer '+auth.getToken()}
+			}).then(function successCallback(response){
+				data = response.data;
 				
-				$http.post('/users/update', $scope.user, {
-					headers: {Authorization: 'Bearer '+auth.getToken()}
-				}).then(function successCallback(response){
-					data = response.data;
-					
-					$state.go('home');
-				}, function errorCallback(response){
-					data = response.data;
-					$scope.error = { message: data };
+				$window.location.reload();
+				
+			}, function errorCallback(response){
+				data = response.data;
+				$scope.error = { message: data };
 
-					jQuery(document).ready(function(){
-						// Scroll to top by default
-						jQuery('html, body').animate({
-						  scrollTop: 0
-						});
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
 					});
 				});
-			};
-		}
+			});
+		};
+	}]);
+	
+	app.controller('AuthCtrl', ['$scope', '$state', 'auth', '$window', function($scope, $state, auth, $window){
+		$scope.user = {};
+
+		$scope.register = function(){
+			auth.register($scope.user).error(function(error){
+				$scope.error = error;
+				
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
+			}).then(function(){
+				//$state.go('home');
+				$window.location.reload(); // hard refresh to re-load MainController
+			});
+		};
+
+		$scope.logIn = function(){
+			auth.logIn($scope.user).error(function(error){
+				$scope.error = error;
+				
+				jQuery(document).ready(function(){
+					// Scroll to top by default
+					jQuery('html, body').animate({
+					  scrollTop: 0
+					});
+				});
+			}).then(function(){
+				//$state.go('home');
+				$window.location.reload(); // hard refresh to re-load MainController
+			});
+		};
+	}]);
+
+	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', function($scope, $http, auth, profile, $state) {
+		$scope.profile = profile;
+	}]);
+	
+	app.controller('NavCtrl', ['$scope', 'auth', function($scope, auth){
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.currentUser = auth.currentUser;
+		$scope.logOut = auth.logOut;
 	}]);
 })();

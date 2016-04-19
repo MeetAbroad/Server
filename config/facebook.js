@@ -32,32 +32,44 @@ module.exports = function(passport) {
 	            if (user) {
 	                return done(null, user); // user found, return that user
 	            } else {
-	                // if there is no user found with that facebook id, create them
-	                var newUser = new User();
-
-					// set all of the facebook information in our user model
-	                newUser.fb.id    = profile.id; // set the users facebook id	                
-	                newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user	                
-
-					newUser.email = profile.emails[0].value;
-					newUser.firstname = profile.name.givenName;
-					newUser.lastname = profile.name.familyName;
 					
-					// These are required so we must add something...
-					newUser.origincountry = '__undefined__';
-					newUser.origincity = '__undefined__';
-					newUser.destinationcountry = '__undefined__';
-					newUser.destinationcity = '__undefined__';
-					newUser.age = '9999';
+					// User with the same e-mail already exists?
+					User.findOne({email: profile.emails[0].value}).exec(function (err, user){
+						if (err) {
+							return done(err);
+						}
+						
+						if (user) {
+							return done(new Error('A user with the same e-mail already exists.')); 
+						}
+												
+						 // if there is no user found with that facebook id, create them
+						var newUser = new User();
 
-					// save our user to the database
-	                newUser.save(function(err) {
-	                    if (err)
-	                        throw err;
+						// set all of the facebook information in our user model
+						newUser.fb.id    = profile.id; // set the users facebook id	                
+						newUser.fb.access_token = access_token; // we will save the token that facebook provides to the user	                
 
-	                    // if successful, return the new user
-	                    return done(null, newUser);
-	                });
+						newUser.email = profile.emails[0].value;
+						newUser.firstname = profile.name.givenName;
+						newUser.lastname = profile.name.familyName;
+						
+						// These are required so we must add something...
+						newUser.origincountry = '__undefined__';
+						newUser.origincity = '__undefined__';
+						newUser.destinationcountry = '__undefined__';
+						newUser.destinationcity = '__undefined__';
+						newUser.age = '9999';
+
+						// save our user to the database
+						newUser.save(function(err) {
+							if (err)
+								return done(new Error('A problem occurred while saving the user details.')); 
+
+							// if successful, return the new user
+							return done(null, newUser);
+						});
+					});
 	            }
 
 	        });
