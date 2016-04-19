@@ -59,15 +59,42 @@ router.post('/login', function(req, res, next){
 // route for facebook authentication and login
 // different scopes while logging in
 router.get('/login/facebook', 
-  passport.authenticate('facebook', { scope : 'email' }
+	passport.authenticate('facebook', { scope : 'email' }
 ));
  
 // handle the callback after facebook has authenticated the user
 router.get('/login/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect : '/',
-    failureRedirect : '/'
-  })
-);
+	passport.authenticate('facebook', {
+		failureRedirect : '/'
+	},
+	function(req, res,done) {
+		
+		console.log(done);
+		console.log(req);
+		console.log(res);
+		
+		User.findOne({ 'facebook.id': req.facebook.id }, function (err, doc){
+			
+			//console.log("Generating token");
+			doc.token = doc.generateJWT();
+			doc.save(function(err) {
+				if (err) {
+					//console.log('Error in Saving token for old user: '+err); 
+					return res.status(401).json(info); 
+				}
+				else
+				{
+					console.log("Token:",doc.generateJWT());
+					  
+					//res.json({token: doc.generateJWT()});
+					res.redirect('/login/facebook/token?token=' + doc.generateJWT());                                        
+				}
+			});
+		});
+});
+
+router.get('/login/facebook/token', function(req, res, next){
+	res.sendFile(__dirname + '/client_views/auth/facebook.html');
+});
 
 module.exports = router;
