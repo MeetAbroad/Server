@@ -16,22 +16,22 @@
 					<div class="col-xs-12 col-md-8">
 						<div class="col-md-12">
 							<h3>{{ notifications.total }} Unread Notifications</h3>
+							<table class="table table-striped">
+								<tr ng-repeat="notification in notifications.notifications" id="row_{{ notification._id }}">
+									<td><span class="blue">Friend Request</span></td>
+									<td>{{ notification.uid1.firstname }} {{ notification.uid1.lastname }}</td>
+									<td><i class="fa fa-home" aria-hidden="true"></i> <span>{{ notification.uid1.origincountry }} - {{ notification.uid1.origincity }}</span></td>
+									<td><i class="fa fa-plane" aria-hidden="true"></i> <span>{{ notification.uid1.destinationcountry }}- {{ notification.uid1.destinationcity }}</span></td>
+									<td style="align: center">
+										<button type="button" class="btn btn-info btn-xs" id="accept_{{ notification._id }}" ng-click="acceptRequest(notification._id)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Accept</button>
+										<button type="button" class="btn btn-warning btn-xs" id="reject_{{ notification._id }}" ng-click="rejectRequest(notification._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
+										
+										<div class="alert-success" id="success_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
+										<div class="alert-danger" id="error_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
+									</td>
+								</tr>
+							</table>
 						</div>
-						<table class="table table-striped">
-							<tr ng-repeat="notification in notifications.notifications" id="row_{{ notification._id }}">
-								<td><span class="blue">Friend Request</span></td>
-								<td>{{ notification.uid1.firstname }} {{ notification.uid1.lastname }}</td>
-								<td><i class="fa fa-home" aria-hidden="true"></i> <span>{{ notification.uid1.origincountry }} - {{ notification.uid1.origincity }}</span></td>
-								<td><i class="fa fa-plane" aria-hidden="true"></i> <span>{{ notification.uid1.destinationcountry }}- {{ notification.uid1.destinationcity }}</span></td>
-								<td style="align: center">
-									<button type="button" class="btn btn-info btn-xs" id="accept_{{ notification._id }}" ng-click="acceptRequest(notification._id)"><i class="fa fa-plus-circle" aria-hidden="true"></i> Accept</button>
-									<button type="button" class="btn btn-warning btn-xs" id="reject_{{ notification._id }}" ng-click="rejectRequest(notification._id)"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
-									
-									<div class="alert-success" id="success_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
-									<div class="alert-danger" id="error_{{ notification._id }}" style="display: none; text-align: center"><span></span></div>
-								</td>
-							</tr>
-						</table>
 					</div>
 					<div class="col-xs-6 col-md-4">
 						<div class="col-md-12 suggestions">

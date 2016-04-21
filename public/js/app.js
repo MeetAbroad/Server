@@ -314,7 +314,7 @@
 		auth.logOut = function(){
 			$window.localStorage.removeItem('meetabroad-token');
 			
-			$location.path('/');
+			$window.location.reload();
 		};
 		
 		auth.getUser = function(){

@@ -10,7 +10,7 @@
 	min-height: 500px;
 }
 
-.suggestions .row {
+.suggestions .row, .connections .row {
 	padding: 10px;
 		border: 1px solid #ccc;
 }
@@ -23,7 +23,7 @@
 	text-align: center;
 }
 
-.suggestions .title {
+.suggestions .title, .connections .title {
 	border: 0;
 }
 

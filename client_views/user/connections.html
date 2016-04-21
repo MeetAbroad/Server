@@ -13,22 +13,23 @@
 				</div>
 				
 				<div class="row">
-					<div class="col-xs-12 col-md-8">
+					<div class="col-xs-12 col-md-8 connections">
 						<div class="row title"><h3>Connections</h3></div>
-						<div class="row" ng-repeat="result in connections.connection" id="row_{{ connection._id }}">
+						<div class="row" ng-repeat="result in connections" id="row_{{ result.connectionid }}" ng-if="connections !== 'loading'">
 							<span style="float: right">{{ result.age }}</span>
-							<span style="float: left"><a href="#/profile/{{ result._id }}">{{ result.firstname }} {{ result.lastname }}</a></span><br />
+							<span style="float: left"><a href="#/profile/{{ result.connectionid }}">{{ result.firstname }} {{ result.lastname }}</a></span><br />
 							
 							<span style="float: right">{{ result.destinationcity }} - {{ result.destinationcountry }} <i class="fa fa-plane" aria-hidden="true"></i></span>
 							<i class="fa fa-home" aria-hidden="true"></i> <span>{{ result.origincountry }} - {{ result.origincity }}</span><br />
 							
 							<div style="text-align: center; padding: 5px">
-								<button type="button" class="btn btn-danger btn-xs" id="send_{{ result._id }}" ng-click="deleteConnection(result._id)"><i class="fa fa-plus-cross" aria-hidden="true"></i> Delete Connection</button>
-								<button type="button" class="btn btn-success btn-xs" id="success_{{ result._id }}" style="display: none"><span></span></button>
+								<button type="button" class="btn btn-danger btn-xs" id="delete_{{ result.connectionid }}" ng-click="deleteConnection(result.connectionid)"><i class="fa fa-plus-cross" aria-hidden="true"></i> Delete Connection</button>
+								<button type="button" class="btn btn-success btn-xs" id="success_{{ result.connectionid }}" style="display: none"><span></span></button>
 							</div>
-							<div style="width: 70%; margin: auto; text-align: center"><div class="alert alert-danger row" id="error_{{ result._id }}" style="display: none"><span></span></div></div>
+							<div style="width: 70%; margin: auto; text-align: center"><div class="alert alert-danger row" id="error_{{ result.connectionid }}" style="display: none"><span></span></div></div>
 						</div>
-						<div class="row" ng-if="connections.length == 0">You have no connections.</div>
+						<div class="row" ng-if="connections === 'loading'">Loading connections...</div>
+						<div class="row" ng-if="connections !== 'loading' && connections.length == 0">You have no connections.</div>
 					</div>
 					<div class="col-xs-6 col-md-4">
 						<div class="col-md-12 suggestions">
