@@ -3,8 +3,8 @@
 	
 	app.controller('MainController', ['$scope', 'auth', '$http', '$state', function($scope, auth, $http, $state) {
 		
-		if(auth.isLoggedIn())
-		{
+		$scope.refreshMain = function(){
+			
 			// Our logged in styleSheets
 			$scope.stylesheets = ['css/home.css'];
 			
@@ -115,6 +115,11 @@
 				});
 			};
 		}
+		
+		if(auth.isLoggedIn())
+		{
+			$scope.refreshMain();
+		}
 	}]);
 	
 	app.controller('HomeController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
@@ -124,6 +129,8 @@
 		{
 			$state.go('finishreg');
 		}
+		
+		$scope.user = user;
     }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
@@ -136,12 +143,6 @@
 		
 		$scope.user = user;
 		
-		// User did not complete registration
-		if(user.destinationcity === '__undefined__')
-		{
-			$state.go('finishreg');
-		}
-
 		$scope.refreshInterests = function(){
 			
 			$scope.selected = {};
@@ -303,6 +304,9 @@
 			}).then(function successCallback(response) {
 				data = response.data;
 				
+				$scope.unreadNotifications--;
+				$scope.notifications.total--;
+				
 				jQuery('#reject_'+id).slideToggle();
 				jQuery('#accept_'+id).slideToggle();
 				
@@ -335,6 +339,9 @@
 			}).then(function successCallback(response) {
 				data = response.data;
 				
+				$scope.unreadNotifications--;
+				$scope.notifications.total--;
+				
 				jQuery('#reject_'+id).slideToggle();
 				jQuery('#accept_'+id).slideToggle();
 				
@@ -360,19 +367,35 @@
 		};
 	}]);
 	
-	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', '$state', function($state, $scope, auth, user, $state) {
+	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', '$state', '$stateParams', '$window',
+		function($state, $scope, auth, user, $state, $stateParams, $window) {
 		
-		$scope.user = user;
-		
-		if(user.destinationcity === '__undefined__')
+		if(!auth.isLoggedIn())
 		{
-			// Go to finish registration
-			$state.go('finishreg');
+			// Then we're probably trying to log in!
+			var token = $stateParams.token;
+			
+			if(token !== 'undefined' && token.length > 0)
+				auth.saveToken(token);
+				
+			// We definitely have to reload here...because we need to veriy afterwards when we're logged in, if the user has completed reg or not
+			$window.location.reload();
 		}
 		else
 		{
-			// Go to home
-			$state.go('home');
+			$scope.user = user;
+			
+			if(user.destinationcity === '__undefined__')
+			{
+				// Go to finish registration
+				$state.go('finishreg');
+			}
+			else
+			{
+				// Go to home
+				$scope.refreshMain(); // hard refresh to re-load MainController
+				$state.go('home');
+			}
 		}
 	}]);
 	
@@ -396,12 +419,15 @@
 		// Update our options
 		$scope.updateOptions = function(){
 			
+			angular.element('#loadingwrap').css('display', 'flex');
+			
 			$http.post('/users/update', $scope.user, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).then(function successCallback(response){
 				data = response.data;
 				
-				$window.location.reload();
+				$state.go('home');
+				$scope.refreshMain(); // hard refresh to re-load MainController
 				
 			}, function errorCallback(response){
 				data = response.data;
@@ -431,8 +457,8 @@
 					});
 				});
 			}).then(function(){
-				//$state.go('home');
-				$window.location.reload(); // hard refresh to re-load MainController
+				$scope.refreshMain(); // hard refresh to re-load MainController
+				$state.go('home');
 			});
 		};
 
@@ -447,13 +473,20 @@
 					});
 				});
 			}).then(function(){
-				//$state.go('home');
-				$window.location.reload(); // hard refresh to re-load MainController
+				$scope.refreshMain(); // hard refresh to re-load MainController
+				$state.go('home');
 			});
 		};
 	}]);
 
-	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', function($scope, $http, auth, profile, $state) {
+	app.controller('ProfileController', ['$scope', '$http', 'auth', 'profile', 'user', '$state', function($scope, $http, auth, profile, user, $state) {
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
+		
 		$scope.profile = profile;
 	}]);
 	

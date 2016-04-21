@@ -139,6 +139,21 @@
 							};
 							
 							return getUser($stateParams.id);
+						}],
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
 						}]
 					}
 				})
@@ -201,23 +216,6 @@
 					url: '/facebook/{token}',
 					templateUrl: 'auth/facebook.html',
 					controller: 'FacebookController',
-					onEnter: ['$stateParams', '$state', 'auth', '$window', function($stateParams, $state, auth, $window){
-						
-						if(!auth.isLoggedIn()) {
-							
-							// Then we're probably trying to log in!
-							var token = $stateParams.token;
-							
-							if(token !== 'undefined' && token.length > 0)
-								auth.saveToken(token);
-								
-							$window.location.reload(); // After this reload, we should be on this same page, with log in done
-						}
-						else
-						{
-							// We're on this page...logged in -> Let the FacebookController handle it!
-						}
-					}],
 					resolve: { // Resolve the 'user' object
 						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
 							
