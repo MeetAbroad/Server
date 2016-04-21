@@ -34,8 +34,6 @@ router.get('/:id', auth, getUser, function(req, res, next) {
 	if(id != req.user._id)
 		return next(new Error('User mismatch.'));
 	
-	console.log("id: "+id);
-	
 	// Get our current connections (uid1=id OR uid2=id)
     Connection.find({$or:[{uid1: id},{uid2: id}]}).exec(function (err, connections){
         if (err) {

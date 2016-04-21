@@ -184,6 +184,33 @@
 						}]
 					}
 				})
+				.state('connections', {
+					url: '/connections',
+					templateUrl: 'user/connections.html',
+					controller: 'ConnectionsController',
+					onEnter: ['$state', 'auth', function($state, auth){
+						if(!auth.isLoggedIn()){
+							$state.go('index');
+						}
+					}],
+					resolve: { // Resolve the 'user' object
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+							
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+							
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
+						}]
+					}
+				})
 				.state('finishreg', {
 					url: '/finishreg',
 					templateUrl: 'auth/finishreg.html',

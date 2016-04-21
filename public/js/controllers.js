@@ -367,6 +367,18 @@
 		};
 	}]);
 	
+	app.controller('ConnectionsController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
+		$scope.user = user;
+		
+		$http.get('/connections/'+user._id, {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).then(function(response){
+			data = response.data;
+			
+			$scope.connections = data;
+		});
+	}]);
+	
 	app.controller('FacebookController', ['$state', '$scope', 'auth', 'user', '$state', '$stateParams', '$window',
 		function($state, $scope, auth, user, $state, $stateParams, $window) {
 		
