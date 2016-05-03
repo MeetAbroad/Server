@@ -83,11 +83,7 @@ router.get('/login/facebook/callback',
 
 		User.findOne({ '_id': req.user._id }, function (err, doc){
 			
-			console.log('found user '+doc.firstname);
-			
 			var jwt = doc.generateJWT();
-			
-			console.log('found jwt '+jwt);
 			
 			res.redirect('/#/facebook/' + jwt);
 		});

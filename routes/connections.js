@@ -58,7 +58,7 @@ router.get('/established/:id', auth, getUser, function(req, res, next) {
 		return next(new Error('User mismatch.'));
 	
 	// Get our current connections (uid1=id OR uid2=id)
-    Connection.find({$or:[{uid1: id},{uid2: id}], accepted: true}).populate('uid1').populate('uid2').exec(function (err, connections){
+    Connection.find({$or:[{uid1: id},{uid2: id}], accepted: true}).populate('uid1', '-hash -salt -interests -__v -fb').populate('uid2', '-hash -salt -interests -__v -fb').exec(function (err, connections){
         if (err) {
 			return next(err);
 		}

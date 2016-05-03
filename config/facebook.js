@@ -11,7 +11,7 @@ module.exports = function(passport) {
         clientSecret    : fbConfig.appSecret,
         callbackURL     : fbConfig.callbackUrl,
 		enableProof: true,
-		profileFields: ['id', "first_name", "gender", "last_name", "email"]
+		profileFields: ['id', "first_name", "gender", "last_name", "email", "photos"]
     },
 
     // facebook will send back the tokens and profile
@@ -30,6 +30,10 @@ module.exports = function(passport) {
 
 				// if the user is found, then log them in
 	            if (user) {
+					// Consider updating the profile picture!
+					user.picture = profile.photos ? profile.photos[0].value : '';
+					user.save();
+					
 	                return done(null, user); // user found, return that user
 	            } else {
 					
@@ -60,6 +64,7 @@ module.exports = function(passport) {
 						newUser.destinationcountry = '__undefined__';
 						newUser.destinationcity = '__undefined__';
 						newUser.age = '9999';
+						newUser.picture = profile.photos ? profile.photos[0].value : '';
 
 						// save our user to the database
 						newUser.save(function(err) {
