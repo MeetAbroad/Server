@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('MeetAbroad', ['ui.router']);
+    var app = angular.module('MeetAbroad', ['ui.router', 'ngFileUpload']);
 
     app.config([
         '$stateProvider',

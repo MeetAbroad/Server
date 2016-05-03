@@ -552,6 +552,28 @@
 								</div>
 								<button type="submit" class="btn btn-default">Save</button>
 							</form>
+							
+							<br />
+							
+							<h3>Profile Picture</h3>
+							
+							<div ng-show="errorpic" class="alert alert-danger row">
+								<span>{{ errorpic.message }}</span>
+							</div>
+							
+							<div ng-show="successpic" class="alert alert-success row">
+								<span>{{ successpic.message }}</span>
+							</div>
+
+							<form name="uploadpicture">
+							<input type="file" ngf-select ng-model="up.file" name="file" ngf-pattern="'image/*'" accept="image/*" ngf-max-size="2MB" />
+							
+							Image thumbnail: <img style="width:100px;" ngf-thumbnail="up.file || '/thumb.jpg'"/>
+							<i ng-show="up.upload_form.file.$error.required">*required</i><br>
+							<i ng-show="up.upload_form.file.$error.maxSize">File too large {{up.file.size / 1000000|number:1}} MB: max 2M</i>
+							<button type="submit" ng-click="up.submit()">submit</button>
+							<p>{{picture.progress}}</p>
+							</form>
 						</div>
 					</div>
 					<div class="col-xs-6 col-md-4 suggestions">
