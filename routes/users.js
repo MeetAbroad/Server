@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var jwt = require('express-jwt');
+var multer = require('multer');
 
 var User = mongoose.model('User');
 var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
@@ -15,7 +16,7 @@ var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 });*/
 
 // Get user data
-router.get('/:email', auth, function(req, res, next) {
+router.get('/:email', function(req, res, next) {
 	
 	var email = req.params.email;
 	
@@ -187,6 +188,55 @@ router.post('/update', auth, function(req, res, next) {
 
 			res.json({message: 'Options updated successfully.'});
 		});
+    });
+});
+
+/*var storage = multer.diskStorage({ //multers disk storage settings
+	destination: function (req, file, cb) {
+		cb(null, path.join(__dirname, 'public/pictures'))
+	},
+	filename: function (req, file, cb) {
+		var datetimestamp = Date.now();
+		req.userPicture = file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1];
+		cb(null, userPicture);
+	}
+});
+
+var upload = multer({ //multer settings
+	storage: storage
+}).single('picture');*/
+
+router.post('/update/picture', auth, function(req, res, next) {
+	
+	var email = req.payload.email;
+	
+    User.findOne({email: email}).exec(function (err, user){
+        if (err) {
+			return next(new Error('User not found.'));
+		}
+        if (!user) {
+			return next(new Error('User not found.'));
+		}
+
+		upload(req,res,function(err){
+			if(err){
+				return next(new Error('Error uploading profile picture.'));
+				return;
+			}
+			
+			console.log(req.userPicture);
+			
+			user.picture = req.userPicture;
+			
+			user.save(function(err, post) {
+				if(err)
+				{
+					return next(new Error('Could not save your profile picture.'));
+				}
+
+				res.json({message: 'Profile picture updated successfully.'});
+			});
+		})
     });
 });
 
