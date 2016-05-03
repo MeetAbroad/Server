@@ -9,6 +9,7 @@
 .idea/
 node_modules/
 public/js/libs/
+public/pictures
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:

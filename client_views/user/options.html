@@ -555,25 +555,40 @@
 							
 							<br />
 							
-							<h3>Profile Picture</h3>
-							
-							<div ng-show="errorpic" class="alert alert-danger row">
-								<span>{{ errorpic.message }}</span>
-							</div>
-							
-							<div ng-show="successpic" class="alert alert-success row">
-								<span>{{ successpic.message }}</span>
-							</div>
+							<div ng-controller="PictureController as up">
+								<h3>Profile Picture</h3>
+								
+								<div ng-show="uploadstatus.error" class="alert alert-danger row">
+									<span>{{ uploadstatus.error }}</span>
+								</div>
+								
+								<div ng-show="uploadstatus.success" class="alert alert-success row">
+									<span>{{ uploadstatus.success }}</span>
+								</div>
 
-							<form name="uploadpicture">
-							<input type="file" ngf-select ng-model="up.file" name="file" ngf-pattern="'image/*'" accept="image/*" ngf-max-size="2MB" />
-							
-							Image thumbnail: <img style="width:100px;" ngf-thumbnail="up.file || '/thumb.jpg'"/>
-							<i ng-show="up.upload_form.file.$error.required">*required</i><br>
-							<i ng-show="up.upload_form.file.$error.maxSize">File too large {{up.file.size / 1000000|number:1}} MB: max 2M</i>
-							<button type="submit" ng-click="up.submit()">submit</button>
-							<p>{{picture.progress}}</p>
-							</form>
+								<div class="row">
+									<div class="col-xs-6">
+											<form name="up.upload_form">
+												<input type="file" ngf-select ng-model="up.file" name="file" ngf-pattern="'image/*'" accept="image/*" ngf-max-size="2MB" />
+												<br />
+												<i ng-show="up.upload_form.file.$error.required">*required</i><br>
+												<i ng-show="up.upload_form.file.$error.maxSize">File too large
+												{{up.file.size / 1000000|number:1}}MB: max 2M</i>
+												<br />
+												<div class="progress" ng-if="progress > 0">
+													<div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{progress}}%">
+													{{progress}}%
+													</div>
+												</div>
+												<br />
+												<button type="submit" class="btn btn-default" ng-click="up.submit()">Update</button>
+											</form>
+									</div>
+									<div class="col-xs-6">
+										<img style="max-width:200px; max-height: 200px" ngf-thumbnail="user.picture"/>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="col-xs-6 col-md-4 suggestions">

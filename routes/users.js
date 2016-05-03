@@ -40,6 +40,10 @@ router.get('/:email', function(req, res, next) {
 		req.user.destinationcountry = user.destinationcountry;
 		req.user.destinationcity = user.destinationcity;
 		req.user.age = user.age;
+		if(user.picture != '')
+			req.user.picture = 'pictures/'+user.picture;
+		else
+			req.user.picture = '';
 		
 		res.json(req.user);
     });
@@ -191,20 +195,20 @@ router.post('/update', auth, function(req, res, next) {
     });
 });
 
-/*var storage = multer.diskStorage({ //multers disk storage settings
+var storage = multer.diskStorage({ //multers disk storage settings
 	destination: function (req, file, cb) {
-		cb(null, path.join(__dirname, 'public/pictures'))
+		cb(null, './public/pictures')
 	},
 	filename: function (req, file, cb) {
 		var datetimestamp = Date.now();
 		req.userPicture = file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1];
-		cb(null, userPicture);
+		cb(null, req.userPicture);
 	}
 });
 
 var upload = multer({ //multer settings
 	storage: storage
-}).single('picture');*/
+}).single('file');
 
 router.post('/update/picture', auth, function(req, res, next) {
 	
@@ -220,8 +224,7 @@ router.post('/update/picture', auth, function(req, res, next) {
 
 		upload(req,res,function(err){
 			if(err){
-				return next(new Error('Error uploading profile picture.'));
-				return;
+				return next(err);
 			}
 			
 			console.log(req.userPicture);
@@ -234,7 +237,7 @@ router.post('/update/picture', auth, function(req, res, next) {
 					return next(new Error('Could not save your profile picture.'));
 				}
 
-				res.json({message: 'Profile picture updated successfully.'});
+				res.json({message: 'Profile picture updated successfully.', picture: user.picture});
 			});
 		})
     });

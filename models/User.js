@@ -16,8 +16,11 @@ var UserSchema = new mongoose.Schema({
     age: { type: Number, required: true },
 
     destinationcountry: { type: String, required: true },
-    destinationcity: { type: String, required: true },
 	
+    destinationcity: { type: String, required: true },
+   
+    picture: { type: String },
+   
 	interests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interest' }],
 	
 	fb: {
