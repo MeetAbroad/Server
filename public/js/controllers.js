@@ -384,7 +384,7 @@
 				value.uid1.connectionid = value._id; // otherwise it gets lost when we push uid1 or uid2
 				value.uid2.connectionid = value._id; // otherwise it gets lost when we push uid1 or uid2
 			
-				if(value.uid1 != user._id)
+				if(value.uid1._id != user._id)
 				{
 					// If uid1 is not us, then we want this one
 					$scope.connections.push(value.uid1);
@@ -578,10 +578,6 @@
 			headers: {Authorization: 'Bearer '+auth.getToken()}
 		}).then(function(res){
 			$scope.user = res.data;
-			if(typeof $scope.user.picture === 'undefined' || $scope.user.picture == '')
-			{
-				$scope.user.picture = 'img/avatar-placeholder.png';
-			}
 		});
 		
         var vm = this;
