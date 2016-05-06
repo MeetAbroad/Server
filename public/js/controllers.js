@@ -130,6 +130,18 @@
 			$state.go('finishreg');
 		}
 		
+		$scope.selected = {};
+		$scope.search = {};
+		$scope.adsearch = {display: false};
+			
+		$http.get('/interests', {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).then(function(response){
+			data = response.data;
+			
+			$scope.interests = data;
+		});
+		
 		$scope.user = user;
     }]);
 

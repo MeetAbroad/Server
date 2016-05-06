@@ -35,4 +35,11 @@
             templateUrl: "common/notifications.html"
         };
     });
+	
+	app.directive("search", function() {
+        return {
+            restrict: 'E',
+            templateUrl: "index/search.html"
+        };
+    });
 })();
