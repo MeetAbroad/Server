@@ -19,7 +19,7 @@ module.exports = function(passport){
         });
     });
 
-    // Setting up Passport Strategies for Facebook and Twitter
+    // Setting up Passport Strategies for Facebook and Twitter | twitter?? local, no?
     facebook(passport);
     local(passport);
 

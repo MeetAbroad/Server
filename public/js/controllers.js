@@ -133,6 +133,16 @@
 		$scope.selected = {};
 		$scope.search = {};
 		$scope.adsearch = {display: false};
+
+		/* test Andreas */
+		$http.get('/notifications', {
+			headers: {Authorization: 'Bearer '+auth.getToken()}
+		}).then(function(response){
+			data = response.data;
+
+			$scope.notifications = data;
+		});
+		/* end test Andreas */
 			
 		$http.get('/interests', {
 			headers: {Authorization: 'Bearer '+auth.getToken()}
@@ -310,15 +320,18 @@
 		
 		// Accept request
 		$scope.acceptRequest = function(id){
-			
+			console.log("primer log:"); //test de andreas
+			console.log($scope.notifications.total); //test de andreas
 			$http.post('/connections/accept/'+id, $scope.user, {
 				headers: {Authorization: 'Bearer '+auth.getToken()}
 			}).then(function successCallback(response) {
 				data = response.data;
-				
+				console.log("segundo log:"); //test de andreas
+				console.log($scope.notifications.total); //test de andreas
 				$scope.unreadNotifications--;
 				$scope.notifications.total--;
-				
+				console.log("tercer log:"); //test de andreas
+				console.log($scope.notifications.total); //test de andreas
 				jQuery('#reject_'+id).slideToggle();
 				jQuery('#accept_'+id).slideToggle();
 				
