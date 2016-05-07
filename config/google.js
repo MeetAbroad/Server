@@ -1,8 +1,8 @@
 var passport = require('passport');
-var FacebookStrategy = require('passport-facebook').Strategy;
+var FacebookStrategy = require('passport-google').Strategy;
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var fbConfig = require('../fb.js');
+var fbConfig = require('../gg.js');
 
 module.exports = function(passport) {
 
