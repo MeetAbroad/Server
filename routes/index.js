@@ -89,4 +89,25 @@ router.get('/login/facebook/callback',
 		});
 });
 
+// route for google authentication and login
+// different scopes while logging in
+router.get('/login/google',
+	passport.authenticate('google', { scope : 'email' }
+	));
+
+// handle the callback after google has authenticated the user
+router.get('/login/google/callback',
+	passport.authenticate('google', {
+		failureRedirect : '/'
+	}),
+	function(req, res, done) {
+
+		User.findOne({ '_id': req.user._id }, function (err, doc){
+
+			var jwt = doc.generateJWT();
+
+			res.redirect('/#/google/' + jwt);
+		});
+	});
+
 module.exports = router;

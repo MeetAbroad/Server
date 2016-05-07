@@ -26,7 +26,12 @@ var UserSchema = new mongoose.Schema({
 	fb: {
 		id: String,
 		access_token: String
-	}
+	},
+
+    google: {
+        id: String,
+        access_token: String
+    }
 });
 
 UserSchema.methods.setPassword = function(password){

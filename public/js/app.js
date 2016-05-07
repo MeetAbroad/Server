@@ -260,6 +260,29 @@
 								return false;
 						}]
 					}
+				})
+				// Used to get JWT from Google authentication method 
+				.state('google', {
+					url: '/google/{token}',
+					templateUrl: 'auth/google.html',
+					controller: 'GoogleController',
+					resolve: { // Resolve the 'user' object
+						user: ['$stateParams', '$http', 'auth', function($stateParams, $http, auth) {
+
+							function getUser() {
+								return $http.get('/users/' + auth.currentUser(), {
+									headers: {Authorization: 'Bearer '+auth.getToken()}
+								}).then(function(res){
+									return res.data;
+								});
+							};
+
+							if(auth.isLoggedIn())
+								return getUser();
+							else
+								return false;
+						}]
+					}
 				});
 
             $urlRouterProvider.otherwise('index');

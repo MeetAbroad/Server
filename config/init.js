@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var local = require('./local');
 var facebook = require('./facebook');
+var google = require('./google');
 var User = mongoose.model('User');
 
 module.exports = function(passport){
@@ -20,7 +21,9 @@ module.exports = function(passport){
     });
 
     // Setting up Passport Strategies for Facebook and Twitter | twitter?? local, no?
+    //adding google
     facebook(passport);
+    google(passport);
     local(passport);
 
 }

@@ -496,6 +496,38 @@
 			}
 		}
 	}]);
+
+	app.controller('GoogleController', ['$state', '$scope', 'auth', 'user', '$state', '$stateParams', '$window',
+		function($state, $scope, auth, user, $state, $stateParams, $window) {
+
+			if(!auth.isLoggedIn())
+			{
+				// Then we're probably trying to log in!
+				var token = $stateParams.token;
+
+				if(token !== 'undefined' && token.length > 0)
+					auth.saveToken(token);
+
+				// We definitely have to reload here...because we need to veriy afterwards when we're logged in, if the user has completed reg or not
+				$window.location.reload();
+			}
+			else
+			{
+				$scope.user = user;
+
+				if(user.destinationcity === '__undefined__')
+				{
+					// Go to finish registration
+					$state.go('finishreg');
+				}
+				else
+				{
+					// Go to home
+					$scope.refreshMain(); // hard refresh to re-load MainController
+					$state.go('home');
+				}
+			}
+		}]);
 	
 	app.controller('FinishregController', ['$scope', '$http', 'auth', 'user', '$state', '$window', function($scope, $http, auth, user, $state, $window) {
 		
