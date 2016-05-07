@@ -41,14 +41,14 @@ router.get('/:email', function(req, res, next) {
 		req.user.destinationcity = user.destinationcity;
 		req.user.age = user.age;
 		
-		if(user.picture != '')
+		/*if(user.picture != '')
 		{
 			if(user.picture.substring(0, 4) != 'http') // Facebook has 'http', so if we don't have it, then it's our image
 				req.user.picture = 'pictures/'+user.picture;
 			else
 				req.user.picture = user.picture;
 		}
-		else
+		else*/
 			req.user.picture = 'img/avatar-placeholder.png';
 		
 		res.json(req.user);
@@ -79,14 +79,14 @@ router.get('/profile/:id', function(req, res, next) {
 		req.user.destinationcity = user.destinationcity;
 		req.user.age = user.age;
 
-		if(user.picture != '')
+		/*if(user.picture != '')
 		{
 			if(user.picture.substring(0, 4) != 'http') // Facebook has 'http', so if we don't have it, then it's our image
 				req.user.picture = 'pictures/'+user.picture;
 			else
 				req.user.picture = user.picture;
 		}
-		else
+		else*/
 			req.user.picture = 'img/avatar-placeholder.png';
 		
 		res.json(req.user);
