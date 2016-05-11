@@ -129,20 +129,14 @@
 		{
 			$state.go('finishreg');
 		}
+	
+		$scope.searchForm = true;
+		$scope.searchResults = false;
+		$scope.searchLoading = false;
 		
 		$scope.selected = {};
 		$scope.search = {};
 		$scope.adsearch = {display: false};
-
-		/* test Andreas */
-		$http.get('/notifications', {
-			headers: {Authorization: 'Bearer '+auth.getToken()}
-		}).then(function(response){
-			data = response.data;
-
-			$scope.notifications = data;
-		});
-		/* end test Andreas */
 			
 		$http.get('/interests', {
 			headers: {Authorization: 'Bearer '+auth.getToken()}
@@ -155,9 +149,18 @@
 		$scope.user = user;
 		
 		$scope.doSearch = function(){
+			
+			$scope.error = null;
+			$scope.results = [];
+			$scope.searchForm = false;
+			$scope.searchLoading = true;
+			
 			if($scope.adsearch.display == true)
 			{
 				// Advanced search
+				$scope.searchResults = false;
+				$scope.searchLoading = false;
+				$scope.searchForm = true;
 			}
 			else
 			{
@@ -169,6 +172,29 @@
 					
 					console.log(data);
 					
+					if(data.length == 0)
+					{
+						$scope.searchResults = false;
+						$scope.searchLoading = false;
+						$scope.searchForm = true;
+						
+						$scope.error = { message: "No results found." };
+					}
+					else
+					{
+						$scope.results = data;
+						
+						$scope.searchLoading = false;
+						$scope.searchResults = true;
+						
+						jQuery(document).ready(function(){
+							// Scroll to top by default
+							jQuery('html, body').animate({
+							  scrollTop: 0
+							});
+						});
+					}
+					
 				}, function errorCallback(response){
 					data = response.data;
 					$scope.error = { message: data };
@@ -179,8 +205,25 @@
 						  scrollTop: 0
 						});
 					});
+					
+					$scope.searchLoading = false;
 				});
 			}
+		};
+		
+		$scope.resetSearch = function(){
+			$scope.error = null;
+			$scope.searchResults = false;
+			$scope.searchLoading = false;
+			$scope.searchForm = true;
+			$scope.results = [];
+			
+			jQuery(document).ready(function(){
+				// Scroll to top by default
+				jQuery('html, body').animate({
+				  scrollTop: 0
+				});
+			});
 		};
     }]);
 
