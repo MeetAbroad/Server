@@ -153,6 +153,35 @@
 		});
 		
 		$scope.user = user;
+		
+		$scope.doSearch = function(){
+			if($scope.adsearch.display == true)
+			{
+				// Advanced search
+			}
+			else
+			{
+				// Basic
+				$http.post('/search/basic', $scope.search, {
+					headers: {Authorization: 'Bearer '+auth.getToken()}
+				}).then(function successCallback(response){
+					data = response.data;
+					
+					console.log(data);
+					
+				}, function errorCallback(response){
+					data = response.data;
+					$scope.error = { message: data };
+
+					jQuery(document).ready(function(){
+						// Scroll to top by default
+						jQuery('html, body').animate({
+						  scrollTop: 0
+						});
+					});
+				});
+			}
+		};
     }]);
 
     app.controller('UserController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {

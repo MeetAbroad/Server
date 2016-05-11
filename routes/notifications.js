@@ -11,7 +11,7 @@ var User = mongoose.model('User');
 // Our getUser middleware
 var getUser = function(req, res, next) {
 
-	User.findOne({email: req.payload.email }, '-hash -salt -interests -__v -fb').exec(function (err, user){
+	User.findOne({email: req.payload.email }, '-hash -salt -interests -__v -fb -google').exec(function (err, user){
         if (err) {
 			return next(err);
 		}
@@ -32,7 +32,7 @@ router.get('/', auth, getUser, function(req, res, next) {
 	var id = req.user._id;
 	
 	// Get our received waiting to be accepted connections
-    Connection.find({uid2: id, accepted: false}).populate('uid1', '-hash -salt -interests -__v -fb').exec(function (err, docs){
+    Connection.find({uid2: id, accepted: false}).populate('uid1', '-hash -salt -interests -__v -fb -google').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}

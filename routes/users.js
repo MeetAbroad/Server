@@ -99,7 +99,7 @@ router.get('/origincity/:city', auth, function(req, res, next) {
 	
 	var city = req.params.city;
 	
-    User.find({origincity: city, email: {'$ne': req.payload.email } }, '-hash -salt -email -interests -__v -fb').exec(function (err, docs){
+    User.find({origincity: city, email: {'$ne': req.payload.email } }, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -117,7 +117,7 @@ router.get('/origincountry/:country', auth, function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({origincountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb').exec(function (err, docs){
+    User.find({origincountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -136,7 +136,7 @@ router.get('/destinationcity/:country/:city', auth, function(req, res, next) {
 	var city = req.params.city;
 	var country = req.params.country;
 	
-    User.find({destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb').exec(function (err, docs){
+    User.find({destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -154,7 +154,7 @@ router.get('/destinationcountry/:country', auth, function(req, res, next) {
 	
 	var country = req.params.country;
 	
-    User.find({destinationcountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb').exec(function (err, docs){
+    User.find({destinationcountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -242,8 +242,6 @@ router.post('/update/picture', auth, function(req, res, next) {
 			if(err){
 				return next(err);
 			}
-			
-			console.log(req.userPicture);
 			
 			user.picture = req.userPicture;
 			

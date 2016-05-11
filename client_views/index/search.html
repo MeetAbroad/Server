@@ -1,6 +1,13 @@
 <div class="row title"><h3>Find People</h3></div>
+<div ng-show="error" class="alert alert-danger row">
+	<span>{{ error.message }}</span>
+</div>
+
+<div ng-show="success" class="alert alert-success row">
+	<span>{{ success.message }}</span>
+</div>
 <div class="row">
-	<form ng-submit="search()">
+	<form ng-submit="doSearch()">
 		<div class="form-group">
 			<label for="firstname">First Name</label>
 			<input type="text" class="form-control" id="firstname" placeholder="First Name"  ng-model="search.firstname" />
@@ -15,7 +22,7 @@
 			<br />
 			<ul>
 				<li ng-repeat="interest in interests | orderBy:'title' | filter:searchText">
-					<input type="checkbox" name="interests[]" value="{{ interest.codename }}" ng-model="selected[interest.codename]"/>&nbsp;&nbsp;{{ interest.title }} - {{ interest.description }}
+					<input type="checkbox" value="{{ interest.codename }}" ng-model="search.selected[interest.codename]"/>&nbsp;&nbsp;{{ interest.title }} - {{ interest.description }}
 				</li>
 			</ul>
 		</div>

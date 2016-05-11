@@ -2,30 +2,42 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var jwt = require('express-jwt');
-var multer = require('multer');
 
 var User = mongoose.model('User');
 var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 
-/*router.get('/', function(req, res, next) {
-  User.find(function(err, users){
-    if(err){ return next(err); }
+// Our getUser middleware
+var getUser = function(req, res, next) {
 
-    res.json(users);
-  });
-});*/
+	User.findOne({email: req.payload.email }, '-hash -salt -interests -__v').exec(function (err, user){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!user ) {
+			return next(new Error('Logged in user not found.'));
+		}
+		
+		req.user = user;
+		
+		return next();
+    });
+}
 
 // Get users by origincity
-router.get('/basic', auth, function(req, res, next) {
+router.post('/basic', auth, getUser, function(req, res, next) {
 	
-	var search_clauses = {};
-	if (req.params.firstname !== undefined && req.params.firstname !== null)
-		search_clauses.firstname = req.params.firstname;
+	var search_clauses = {destinationcity: req.user.destinationcity, destinationcountry: req.user.destinationcountry};
+
+	if (req.body.firstname !== undefined && req.body.firstname !== null && req.body.firstname !== "")
+		search_clauses.firstname = req.body.firstname;
 	
-	if (req.params.lastname !== undefined && req.params.lastname !== null)
-		search_clauses.lastname = req.params.lastname;
+	if (req.body.lastname !== undefined && req.body.lastname !== null && req.body.lastname !== "")
+		search_clauses.lastname = req.body.lastname;
 	
-    User.find(search_clauses, '-hash -salt -email -interests -__v -fb').populate('interests').exec(function (err, docs){
+	console.log(search_clauses);
+	
+    User.find(search_clauses, '-hash -salt -email -__v -fb -google').sort({'name': -1}).limit(10).populate('interests').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
@@ -35,15 +47,26 @@ router.get('/basic', auth, function(req, res, next) {
 		}
 		
 		var users = [];
-		
+
 		// Time to go through each user
-		docs.each(function(error, doc){
-			if (error) return new(error);
-			if (!doc) return next(new Error('No user found.'));
+		docs.forEach(function(doc){
 			
 			// Now it's time to check the interests
-			// TODO
-			users.push(doc);
+			if(req.body.selected !== undefined && req.body.selected.length != 0 && req.body.selected !== null)
+			{
+				var added = false;
+				doc.interests.forEach(function(interest){
+					if(!added)
+					{
+						// If this interest is in our interests selection...
+						if(req.body.selected[interest.codename] !== undefined && req.body.selected[interest.codename] !== null && req.body.selected[interest.codename] === true)
+						{
+							users.push(doc);
+							added = true;
+						}
+					}
+				});
+			}
 		});
 		
 		res.json(users);
@@ -56,7 +79,7 @@ router.get('/basic', auth, function(req, res, next) {
 	- Min and Max age
 	- (future) Gender
 */
-router.get('/advanced', auth, function(req, res, next) {
+router.post('/advanced', auth, function(req, res, next) {
 	
 
 });
