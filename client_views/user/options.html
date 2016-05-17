@@ -555,7 +555,7 @@
 							
 							<br />
 							
-							<div ng-controller="PictureController as up" ng-hide="user.picture.indexOf('https://') == 0">
+							<div ng-controller="PictureController as up" ng-hide="user.picture.indexOf('https://') !== false">
 								<h3>Profile Picture</h3>
 								
 								<div ng-show="uploadstatus.error" class="alert alert-danger row">

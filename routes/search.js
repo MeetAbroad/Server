@@ -40,6 +40,8 @@ router.post('/basic', auth, getUser, function(req, res, next) {
 	if (req.body.lastname !== undefined && req.body.lastname !== null && req.body.lastname !== "")
 		search_clauses.lastname = req.body.lastname;
 	
+	search_clauses._id = { $ne: req.user._id };
+	
     User.find(search_clauses, '-hash -salt -email -__v -fb -google').sort({'name': -1}).limit(10).populate('interests').exec(function (err, docs){
         if (err) {
 			return next(err);
