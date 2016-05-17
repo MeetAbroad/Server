@@ -20,6 +20,8 @@ var UserSchema = new mongoose.Schema({
     destinationcity: { type: String, required: true },
    
     picture: { type: String },
+    
+    gender: { type: String },
    
 	interests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Interest' }],
 	
