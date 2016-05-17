@@ -41,6 +41,7 @@ router.post('/register', function(req, res, next){
 		user.destinationcountry = req.body.destinationcountry;
 		user.destinationcity = req.body.destinationcity;
 		user.age = req.body.age;
+		user.picture = '';
 
 		user.setPassword(req.body.password)
 
