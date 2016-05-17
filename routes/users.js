@@ -79,6 +79,7 @@ router.get('/profile/:id', function(req, res, next) {
 		req.user.destinationcountry = user.destinationcountry;
 		req.user.destinationcity = user.destinationcity;
 		req.user.age = user.age;
+		req.user.gender = user.gender;
 
 		if(user.picture != '')
 		{
