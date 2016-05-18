@@ -173,7 +173,7 @@ router.post('/update', auth, function(req, res, next) {
 	
 	if(	!req.body.firstname || !req.body.lastname
 		|| !req.body.origincountry || !req.body.origincity
-		|| !req.body.destinationcountry|| !req.body.destinationcity)
+		|| !req.body.destinationcountry|| !req.body.destinationcity || !req.body.gender)
 	{
 		return res.status(400).json('Please fill out all fields');
 	}
@@ -199,6 +199,7 @@ router.post('/update', auth, function(req, res, next) {
 		user.origincity = req.body.origincity;
 		user.destinationcountry = req.body.destinationcountry;
 		user.destinationcity = req.body.destinationcity;
+		user.gender = req.body.gender;
 		
 		user.save(function(err, post) {
 			if(err)
