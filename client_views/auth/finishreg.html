@@ -22,6 +22,12 @@
 					
 					<form ng-submit="updateOptions()">
 						<div class="form-group">
+							<label for="gender">Gender:</label>
+							<div class="radio"><label><input type="radio" name="gender" value="Male" class="inlineradio1" ng-model="user.gender" id="gender"> Male </label></div>
+							<div class="radio"><label><input type="radio" name="gender" value="Female" class="inlineradio1" ng-model="user.gender" id="gender"> Female </label></div>
+							<div class="radio"><label><input type="radio" name="gender" value="Not showing" class="inlineradio1" ng-model="user.gender" id="gender"> Don't want to show </label></div>
+						</div>
+						<div class="form-group">
 							<label for="origincountry">Origin Country</label>
 							<select name="origincountry" class="form-control" id="origincountry"  ng-model="user.origincountry">
 								<option value="AF">Afghanistan</option>

@@ -55,7 +55,7 @@ module.exports = function(passport) {
 						newUser.google.access_token = access_token; // we will save the token that facebook provides to the user
 
 						newUser.email = profile.emails[0].value;
-						
+
 						var names = profile.displayName.split(' ');
 						
 						newUser.firstname = names[0];
@@ -65,14 +65,15 @@ module.exports = function(passport) {
 							newUser.lastname = names[1];
 						else
 							newUser.lastname = names[0]; // Same as first name then!
-						
+
 						newUser.origincountry = '__undefined__';
 						newUser.origincity = '__undefined__';
 						newUser.destinationcountry = '__undefined__';
 						newUser.destinationcity = '__undefined__';
 						newUser.age = '9999';
+						newUser.gender = 'Male';
 						newUser.picture = profile.photos ? profile.photos[0].value : '';
-
+						
 						// save our user to the database
 						newUser.save(function(err) {
 							if (err)

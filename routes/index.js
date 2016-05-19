@@ -16,7 +16,7 @@ router.post('/register', function(req, res, next){
 		|| !req.body.firstname || !req.body.lastname
 		|| !req.body.origincountry || !req.body.origincity
 		|| !req.body.destinationcountry|| !req.body.destinationcity
-		|| !req.body.agree)
+		|| !req.body.agree || !req.body.gender)
 	{
 		return res.status(400).json({message: 'Please fill out all fields.'});
 	}
