@@ -76,7 +76,7 @@ router.get('/:email', function(req, res, next) {
 });
 
 
-router.post('/new', auth, function(req, res, next) {
+router.post('/new', function(req, res, next) {
   var interest = new Interest(req.body);
 
   interest.save(function(err, post){
