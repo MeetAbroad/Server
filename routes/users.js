@@ -95,68 +95,22 @@ router.get('/profile/:id', function(req, res, next) {
     });
 });
 
-
-// Get users by origincity
-router.get('/origincity/:city', auth, function(req, res, next) {
-	
-	var city = req.params.city;
-	
-    User.find({origincity: city, email: {'$ne': req.payload.email } }, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
-        if (err) {
-			return next(err);
-		}
-		
-        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
-			return next(new Error('No results found.'));
-		}
-		
-		res.json(docs);
-    });
-});
-
-// Get users by origincountry
-router.get('/origincountry/:country', auth, function(req, res, next) {
-	
-	var country = req.params.country;
-	
-    User.find({origincountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
-        if (err) {
-			return next(err);
-		}
-		
-        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
-			return next(new Error('No results found.'));
-		}
-		
-		res.json(docs);
-    });
-});
-
-// Get users by origincity
+// Get users by destination country and city
 router.get('/destinationcity/:country/:city', auth, function(req, res, next) {
 	
 	var city = req.params.city;
 	var country = req.params.country;
 	
-    User.find({destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
-        if (err) {
-			return next(err);
-		}
-		
-        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
-			return next(new Error('No results found.'));
-		}
-		
-		res.json(docs);
-    });
-});
-
-// Get users by destinationcountry
-router.get('/destinationcountry/:country', auth, function(req, res, next) {
+	var search_clauses = { destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email } };
 	
-	var country = req.params.country;
+	if(req.params.notin !== undefined && req.params.notin.length > 0)
+	{
+		var notin_ids = req.params.notin;
+		
+		search_clauses._id = { "$nin": notin_ids }; // exclude users
+	}
 	
-    User.find({destinationcountry: country, email: {'$ne': req.payload.email }}, '-hash -salt -email -interests -__v -fb -google').exec(function (err, docs){
+    User.find(search_clauses, '-hash -salt -email -interests -__v -fb -google').sort({'firstname': -1}).limit(5).exec(function (err, docs){
         if (err) {
 			return next(err);
 		}

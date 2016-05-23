@@ -42,7 +42,7 @@ router.post('/basic', auth, getUser, function(req, res, next) {
 	
 	search_clauses._id = { $ne: req.user._id };
 	
-    User.find(search_clauses, '-hash -salt -email -__v -fb -google').sort({'name': -1}).limit(10).populate('interests').exec(function (err, docs){
+    User.find(search_clauses, '-hash -salt -email -__v -fb -google').sort({'firstname': -1}).limit(10).populate('interests').exec(function (err, docs){
         if (err) {
 			return next(err);
 		}
