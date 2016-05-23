@@ -20,9 +20,9 @@
 								<tr ng-repeat="notification in notifications.notifications" id="row_{{ notification._id }}">
 									<td>
 										<div style="float: left">
-											<img src="img/avatar-placeholder.png" ng-if="!notification.picture" style="width: 50px; height: 50px; margin-right: 5px" />
-											<img ng-src="pictures/{{ notification.picture }}" ng-if="notification.picture!==undefined && notification.picture.indexOf('https://') === -1 && notification.picture" style="width: 50px; height: 50px; margin-right: 5px" />
-											<img ng-src="{{ notification.picture }}" ng-if="notification.picture!==undefined && notification.picture.indexOf('https://') !== -1" style="width: 50px; height: 50px; margin-right: 5px" />
+											<img src="img/avatar-placeholder.png" ng-if="!notification.uid1.picture" style="width: 50px; height: 50px; margin-right: 5px" />
+											<img ng-src="pictures/{{ notification.uid1.picture }}" ng-if="notification.uid1.picture!==undefined && notification.uid1.picture.indexOf('https://') === -1 && notification.uid1.picture" style="width: 50px; height: 50px; margin-right: 5px" />
+											<img ng-src="{{ notification.uid1.picture }}" ng-if="notification.uid1.picture!==undefined && notification.uid1.picture.indexOf('https://') !== -1" style="width: 50px; height: 50px; margin-right: 5px" />
 										</div>
 									</td>
 									<td style="vertical-align: middle"><span class="blue">Friend Request</span></td>
