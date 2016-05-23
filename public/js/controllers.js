@@ -25,43 +25,8 @@
 						
 						suggestions = response.data;
 						
-						////// IMPORTANT: TODO this should probably be on the server-side...but meh...
-						
-						// Now get our connections so we can remove those users from this list
-						$http.get('/connections/'+user._id, {
-							headers: {Authorization: 'Bearer '+auth.getToken()}
-						}).then(function successCallback(response){
-								
-		
-								var connections = response.data;
-
-								// Remove them
-								for (var i = suggestions.length - 1; i >= 0; i--) {
-									var s = suggestions[i];
-									
-									for (var j = connections.length - 1; j >= 0; j--) {
-										var c = connections[j];
-				
-										if(
-											(s._id == c.uid1 && c.uid2 == user._id)
-											||
-											(s._id == c.uid2 && c.uid1 == user._id)
-										)
-										{
-											suggestions.splice(i, 1);
-											break;
-										}
-									}
-								}
-								
-								// We have our results now
-								$scope.resultsByDestinationCity = suggestions;
-								
-							}, function errorCallback(response){
-								// We have our results already
-								$scope.resultsByDestinationCity = suggestions;
-							}
-						);
+						// We have our results now
+						$scope.resultsByDestinationCity = suggestions;
 					});
 				}
 			});

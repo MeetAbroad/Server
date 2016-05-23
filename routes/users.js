@@ -4,16 +4,28 @@ var mongoose = require('mongoose');
 var jwt = require('express-jwt');
 var multer = require('multer');
 
-var User = mongoose.model('User');
 var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 
-/*router.get('/', function(req, res, next) {
-  User.find(function(err, users){
-    if(err){ return next(err); }
+var Connection = mongoose.model('Connection');
+var User = mongoose.model('User');
 
-    res.json(users);
-  });
-});*/
+// Our getUser middleware
+var getUser = function(req, res, next) {
+
+	User.findOne({email: req.payload.email }, '-hash -salt -interests -__v').exec(function (err, user){
+        if (err) {
+			return next(err);
+		}
+		
+        if (!user ) {
+			return next(new Error('Logged in user not found.'));
+		}
+		
+		req.user = user;
+		
+		return next();
+    });
+}
 
 // Get user data
 router.get('/:email', function(req, res, next) {
@@ -96,30 +108,56 @@ router.get('/profile/:id', function(req, res, next) {
 });
 
 // Get users by destination country and city
-router.get('/destinationcity/:country/:city', auth, function(req, res, next) {
+router.get('/destinationcity/:country/:city', auth, getUser, function(req, res, next) {
 	
 	var city = req.params.city;
 	var country = req.params.country;
 	
 	var search_clauses = { destinationcountry: country, destinationcity: city, email: {'$ne': req.payload.email } };
 	
-	if(req.params.notin !== undefined && req.params.notin.length > 0)
-	{
-		var notin_ids = req.params.notin;
-		
-		search_clauses._id = { "$nin": notin_ids }; // exclude users
-	}
+	if(req.query.notin === undefined || req.query.notin === null)
+		req.query.notin = [];
 	
-    User.find(search_clauses, '-hash -salt -email -interests -__v -fb -google').sort({'firstname': -1}).limit(5).exec(function (err, docs){
-        if (err) {
+	// Find our connections and add their _id to the req.query.notin variable
+	// Get our current connections (uid1=id OR uid2=id)
+    Connection.find({$or:[{uid1: req.user._id},{uid2: req.user._id}]}).exec(function (err, connections){
+        if (!err)
+		{
+			if (!connections || typeof connections === 'undefined' || connections.length == 0) {
+				// No connections found
+			}
+			else
+			{
+				for(var i=0;i<connections.length;i++)
+				{
+					if(connections[i].uid1.toString() == req.user._id.toString())
+					{
+						req.query.notin.push(connections[i].uid2.toString()); // we don't want to see this guy over there
+					}
+					else
+					{
+						req.query.notin.push(connections[i].uid1.toString()); // we don't want to see this guy over there
+					}
+				}
+			}
+
+			notin_ids = req.query.notin;
+			search_clauses._id = { "$nin": notin_ids }; // exclude users
+
+			User.find(search_clauses, '-hash -salt -email -interests -__v -fb -google').sort({'firstname': -1}).limit(5).exec(function (err, docs){
+				if (err) {
+					return next(err);
+				}
+				
+				if (!docs || typeof docs === 'undefined' || docs.length == 0) {
+					return next(new Error('No results found.'));
+				}
+				
+				res.json(docs);
+			});
+		}
+		else
 			return next(err);
-		}
-		
-        if (!docs || typeof docs === 'undefined' || docs.length == 0) {
-			return next(new Error('No results found.'));
-		}
-		
-		res.json(docs);
     });
 });
 
