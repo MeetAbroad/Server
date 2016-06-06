@@ -13,3 +13,6 @@ Open js/controllers/profile.js and find 'http://147.83.7.163:3000' and replace b
 
 ## changing the port
 If you want to use on a production environment, you should consider changing the listening port to 80 rather than 3000.
+
+## MongoDB
+MongoDB is required! It must be running.
