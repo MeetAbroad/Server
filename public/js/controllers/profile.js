@@ -29,7 +29,7 @@
        
         vm.upload = function (file) {
             Upload.upload({
-                url: 'http://localhost:3000/users/update/picture', //webAPI exposed to upload the file
+                url: 'http://147.83.7.163:3000/users/update/picture', //webAPI exposed to upload the file
                 data:{file:file}, //pass file as data, should be user ng-model
 				headers: {Authorization: 'Bearer '+auth.getToken()}
             }).then(function (resp) { //upload function returns a promise
