@@ -21,22 +21,21 @@ module.exports = function(passport) {
 		process.nextTick(function() {
 
 			// find the user in the database based on their facebook id
-	        User.findOne({ 'fb.id' : profile.id }, function(err, user) {
+			User.findOne({ 'fb.id' : profile.id }, function(err, user) {
 
-	        	// if there is an error, stop everything and return that
-	        	// ie an error connecting to the database
-	            if (err)
-	                return done(err);
+				// if there is an error, stop everything and return that
+				// ie an error connecting to the database
+				if (err)
+				    return done(err);
 
-				// if the user is found, then log them in
-	            if (user) {
-					// Consider updating the profile picture!
-					user.picture = profile.photos ? profile.photos[0].value : '';
-					user.save();
-					
-	                return done(null, user); // user found, return that user
-	            } else {
-					
+					// if the user is found, then log them in
+				if (user) {
+						// Consider updating the profile picture!
+						user.picture = profile.photos ? profile.photos[0].value : '';
+						user.save();
+						
+				    return done(null, user); // user found, return that user
+				} else {
 					// User with the same e-mail already exists?
 					User.findOne({email: profile.emails[0].value}).exec(function (err, user){
 						if (err) {
@@ -75,10 +74,8 @@ module.exports = function(passport) {
 							return done(null, newUser);
 						});
 					});
-	            }
-
-	        });
-        });
-
-    }));
+				}
+			});
+		});
+	}));
 };
