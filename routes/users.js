@@ -165,7 +165,7 @@ router.post('/update', auth, function(req, res, next) {
 	
 	if(	!req.body.firstname || !req.body.lastname
 		|| !req.body.origincountry || !req.body.origincity
-		|| !req.body.destinationcountry|| !req.body.destinationcity || !req.body.gender)
+		|| !req.body.destinationcountry|| !req.body.destinationcity || !req.body.gender || !req.body.age)
 	{
 		return res.status(400).json('Please fill out all fields');
 	}

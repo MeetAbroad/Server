@@ -76,7 +76,6 @@
 		$scope.user = user;
 	
 		// Erase our default fields
-		//WHY THIS?????
 		$scope.user.destinationcity = '';
 		$scope.user.destinationcountry = '';
 		$scope.user.origincity = '';
