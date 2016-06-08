@@ -2,6 +2,13 @@
     var app = angular.module('MeetAbroad');
 	
 	app.controller('NotificationsController', ['$scope', '$http', 'auth', 'user', '$state', '$timeout', function($scope, $http, auth, user, $state, $timeout) {
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
+		
 		$scope.user = user;
 		
 		$scope.notifications = {notifications:[], total: 0};

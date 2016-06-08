@@ -2,6 +2,13 @@
     var app = angular.module('MeetAbroad');
 	
 	app.controller('ConnectionsController', ['$scope', '$http', 'auth', 'user', '$state', function($scope, $http, auth, user, $state) {
+		
+		// User did not complete registration
+		if(user.destinationcity === '__undefined__')
+		{
+			$state.go('finishreg');
+		}
+		
 		$scope.user = user;
 		$scope.connections = "loading";
 		
