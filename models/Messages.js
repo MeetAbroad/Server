@@ -8,6 +8,4 @@ var MessagesSchema = new mongoose.Schema({
 	read: { type: Boolean, default: false },
 });
 
-MessagesSchema.index({uid1: 1, uid2: 1}, {unique: true});
-
 module.exports = mongoose.model('Messages', MessagesSchema);
