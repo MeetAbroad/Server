@@ -8,6 +8,7 @@ var auth = jwt({secret: process.env.MYSECRET, userProperty: 'payload'});
 var Connection = mongoose.model('Connection');
 var User = mongoose.model('User');
 var Message = mongoose.model('Messages');
+var ListMessages = mongoose.model('ListMessages');
 
 // Our getUser middleware
 var getUser = function(req, res, next) {
@@ -50,6 +51,29 @@ router.get('/:id', auth, getUser, function(req, res, next) {
 	});
 
 });
+
+router.get('/list/:id', auth, getUser, function(req, res, next) {
+
+	var id = req.params.id;
+
+	if(id != req.user._id)
+		return next(new Error('User mismatch.'));
+
+	// Get our messages (uid1=id OR uid2=id)
+	ListMessages.find({$or:[{uid1: id},{uid2: id}]}).populate('uid1', '-hash -salt -interests -__v -fb -google').populate('uid2', '-hash -salt -interests -__v -fb -google').exec(function (err, messages){
+		if (err) {
+			return next(err);
+		}
+
+		if (!messages || typeof messages === 'undefined' || messages.length == 0) {
+			return next(new Error('No messages found.'));
+		}
+		console.log(messages);
+		res.json(messages);
+	});
+
+});
+
 /* TESTEOOO
 // Similar to the above, except that the uid1 and uid2 are populated and the connections are established (accepted=true)
 router.get('/established/:id', auth, getUser, function(req, res, next) {

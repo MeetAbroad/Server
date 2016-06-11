@@ -14,6 +14,7 @@ require('./models/User');
 require('./models/Interest');
 require('./models/Connection');
 require('./models/Messages');
+require('./models/ListMessages');
 
 mongoose.connect('mongodb://localhost/meetabroad');
 
