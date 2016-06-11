@@ -29,15 +29,13 @@
 			}).then(function successCallback(response) {
 				data = response.data;
 				
+				$scope.notifications.total--;
+				
 				jQuery('#reject_'+id).slideToggle();
 				jQuery('#accept_'+id).slideToggle();
 				
 				jQuery('#success_'+id+' span').text(data);
 				jQuery('#success_'+id).slideToggle();
-				
-				$timeout(function() {
-					$scope.notifications.total--;
-				}, 2000);
 				
 				$scope.refreshMain(); // Refresh MainController
 				
@@ -67,10 +65,6 @@
 				
 				jQuery('#success_'+id+' span').text(data);
 				jQuery('#success_'+id).slideToggle();
-
-				$timeout(function() {
-					$scope.notifications.total--;
-				}, 2000);
 				
 				$scope.refreshMain(); // Refresh MainController
 				
