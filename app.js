@@ -13,6 +13,7 @@ process.env['MYSECRET'] = '123456123456123456';
 require('./models/User');
 require('./models/Interest');
 require('./models/Connection');
+require('./models/Messages');
 
 mongoose.connect('mongodb://localhost/meetabroad');
 
@@ -22,6 +23,7 @@ var interests = require('./routes/interests');
 var connections = require('./routes/connections');
 var notifications = require('./routes/notifications');
 var search = require('./routes/search');
+var messages = require('./routes/messages');
 
 var app = express();
 
@@ -71,6 +73,7 @@ app.use('/interests', interests);
 app.use('/connections', connections);
 app.use('/notifications', notifications);
 app.use('/search', search);
+app.use('/messages', messages);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
