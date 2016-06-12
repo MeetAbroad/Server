@@ -52,6 +52,28 @@ router.get('/:id', auth, getUser, function(req, res, next) {
 
 });
 
+router.get('/mine/:id/:cosa', auth, getUser, function(req, res, next) {
+
+	var id = req.params.id;
+	var id2 = req.params.cosa;
+
+	if(id != req.user._id)
+		return next(new Error('User mismatch.'));
+	
+	Message.find({cid: id2}).populate('uid1', '-hash -salt -interests -__v -fb -google').populate('uid2', '-hash -salt -interests -__v -fb -google').exec(function (err, messages){
+		if (err) {
+			return next(err);
+		}
+
+		if (!messages || typeof messages === 'undefined' || messages.length == 0) {
+			return next(new Error('No messages found.'));
+		}
+		console.log(messages);
+		res.json(messages);
+	});
+
+});
+
 router.get('/list/:id', auth, getUser, function(req, res, next) {
 
 	var id = req.params.id;
