@@ -149,13 +149,13 @@ router.post('/newmessage', function(req, res, next){
 	message.To = req.body.uid2;
 	message.message = req.body.message;
 	listmessage.lastmessage = req.body.message;
-	
-	
-	 ListMessages.findOne().sort('itemId').exec(function(err, item) {
+
+
+	 ListMessages.findOne().sort('cid').exec(function(err, item) {
 		 	console.log("############ CID");
 		 	console.log(item.cid);
-			message.cid = item.cid+24;
-		 	listmessage.cid = item.cid+24;
+			message.cid = item.cid-1;
+		 	listmessage.cid = item.cid-1;
 		 console.log(message.cid);
 
 		 message.save(function (err){
