@@ -96,140 +96,83 @@ router.get('/list/:id', auth, getUser, function(req, res, next) {
 
 });
 
-/* TESTEOOO
-// Similar to the above, except that the uid1 and uid2 are populated and the connections are established (accepted=true)
-router.get('/established/:id', auth, getUser, function(req, res, next) {
+router.post('/message', function(req, res, next){
 	
-	var id = req.params.id;
-	
-	if(id != req.user._id)
-		return next(new Error('User mismatch.'));
-	
-	// Get our current connections (uid1=id OR uid2=id)
-    Connection.find({$or:[{uid1: id},{uid2: id}], accepted: true}).populate('uid1', '-hash -salt -interests -__v -fb -google').populate('uid2', '-hash -salt -interests -__v -fb -google').exec(function (err, connections){
-        if (err) {
-			return next(err);
-		}
-		
-        if (!connections || typeof connections === 'undefined' || connections.length == 0) {
-			return next(new Error('No connections found.'));
-		}
-		
-		res.json(connections);
-    });
-});
+		var message = new Message();
+	console.log(req);
 
-// Create connection
-router.post('/new/:id', auth, getUser, function(req, res, next) {
+			message.cid = req.body.cid;
+			message.uid1 = req.body.uid1;
+			message.uid2 = req.body.uid2;
+			message.From = req.body.From;
+			message.To = req.body.To;
+			message.message = req.body.message;
 	
-	var id = req.params.id;
+	var date = new Date();
 	
-    User.findOne({_id: id}).exec(function (err, user){
-        if (err) {
-			return next(err);
-		}
-        if (!user) {
-			return next(new Error('User not found'));
-		}
-
-		// We found the user, so now we must find a connection between the two
-		Connection.findOne( {$or:[{uid1: req.user._id, uid2: user._id},{uid1: user._id, uid2: req.user._id}]} ).exec(function (err, connection){
-			if (err) {
-				return next(err);
-			}
-			
-			// We handle errors differently here, because we use jQuery for this route
-			if (connection && connection.accepted == false) {
-				//res.json({'error': 'A pending connection already exists with this user.'});
-				
-				return next(new Error('A pending connection already exists with this user.'));
-			}
-			else if (connection && connection.accepted == true) {
-				//res.json({'error': 'A connection already exists with this user.'});
-				
-				return next(new Error('A connection already exists with this user.'));
-			}
-			else
-			{
-				var c = new Connection();
-				c.uid1 = req.user._id; // Ours
-				c.uid2 = user._id; // Theirs
-
-				c.save(function(err, post){
-					if(err){ return next(err); }
-
-					res.json("Request sent successfully!");
-				});
-			}
-		});
-    });
-});
-
-// Accept connection
-router.post('/accept/:id', auth, getUser, function(req, res, next) {
 	
-	var id = req.params.id;
-	
-    Connection.findOne({_id: id, uid2: req.user._id, accepted: false}).exec(function (err, connection){
-        if (err) {
-			return next(err);
-		}
-        if (!connection) {
-			return next(new Error('Request not found.'));
-		}
-		
-		connection.accepted = true;
-
-		connection.save(function(err, post){
+		message.save(function (err){
 			if(err){ return next(err); }
 
-			res.json("Request accepted!");
+			return true;
 		});
-    });
+
+	ListMessages.findOneAndUpdate({ cid: message.cid }, { lastmessage: message.message }, function(err, data) {
+		if (err) throw err;
+
+		// we have the updated user returned to us
+		console.log("Field updated");
+		console.log(data);
+	});
+	
+	/*if(!message.cid){
+		ListMessages.findOne().sort('-itemId').exec(function(err, item) {
+			item.cid
+		});
+	}*/
+	
 });
 
-// Reject connection
-router.post('/reject/:id', auth, getUser, function(req, res, next) {
-	
-	var id = req.params.id;
-	
-    Connection.findOne({_id: id, uid2: req.user._id, accepted: false}).exec(function (err, connection){
-        if (err) {
-			return next(err);
-		}
-        if (!connection) {
-			return next(new Error('Request not found.'));
-		}
-		
-		connection.remove(function(err, post){
-			if(err){ return next(err); }
+router.post('/newmessage', function(req, res, next){
 
-			res.json("Request rejected!");
-		});
-    });
+	var message = new Message();
+	var listmessage = new ListMessages();
+
+	console.log("#####EL BODYYYY######");
+	console.log(req.body);
+	message.cid = req.body.cid;
+	message.uid1 = req.body.uid1;
+	message.uid2 = req.body.uid2;
+	listmessage.uid1 = req.body.uid1;
+	listmessage.uid2 = req.body.uid2;
+	message.From = req.body.uid1;
+	message.To = req.body.uid2;
+	message.message = req.body.message;
+	listmessage.lastmessage = req.body.message;
+	
+	
+	 ListMessages.findOne().sort('itemId').exec(function(err, item) {
+		 	console.log("############ CID");
+		 	console.log(item.cid);
+			message.cid = item.cid+24;
+		 	listmessage.cid = item.cid+24;
+		 console.log(message.cid);
+
+		 message.save(function (err){
+			 if(err){ return next(err); }
+
+			 return true;
+		 });
+
+		 listmessage.save(function (err){
+		  if(err){ return next(err); }
+
+		  return true;
+		  });
+		 
+	 });
+
+
+
 });
-
-// Delete connection
-router.post('/delete/:id', auth, getUser, function(req, res, next) {
-	
-	var id = req.params.id;
-	
-    Connection.findOne({_id: id, accepted: true}).exec(function (err, connection){
-        if (err) {
-			return next(err);
-		}
-        if (!connection) {
-			return next(new Error('Request not found.'));
-		}
-
-		connection.remove(function(err, post){
-			if(err){ return next(err); }
-
-			res.json("Connection deleted!");
-		});
-    });
-});
-
-*/
-
 module.exports = router;
