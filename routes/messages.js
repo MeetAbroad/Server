@@ -114,16 +114,13 @@ router.post('/message', function(req, res, next){
 		message.save(function (err){
 			if(err){ return next(err); }
 
-			return true;
+			ListMessages.findOneAndUpdate({ cid: message.cid }, { lastmessage: message.message }, function(err, data) {
+				if (err) { return next(err); }
+				res.json("Message sent successfully!");
+			});
 		});
 
-	ListMessages.findOneAndUpdate({ cid: message.cid }, { lastmessage: message.message }, function(err, data) {
-		if (err) throw err;
-
-		// we have the updated user returned to us
-		console.log("Field updated");
-		console.log(data);
-	});
+	
 	
 	/*if(!message.cid){
 		ListMessages.findOne().sort('-itemId').exec(function(err, item) {
@@ -161,14 +158,14 @@ router.post('/newmessage', function(req, res, next){
 		 message.save(function (err){
 			 if(err){ return next(err); }
 
-			 return true;
+			 listmessage.save(function (err){
+				 if(err){ return next(err); }
+
+				 res.json("New Message sent successfully!");
+			 });
 		 });
 
-		 listmessage.save(function (err){
-		  if(err){ return next(err); }
-
-		  return true;
-		  });
+		 
 		 
 	 });
 
